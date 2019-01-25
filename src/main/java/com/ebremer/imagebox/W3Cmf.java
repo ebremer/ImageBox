@@ -20,9 +20,14 @@ import org.slf4j.LoggerFactory;
 public class W3Cmf {
     final Server server = new Server();
     int port = 8888;
+    String webfiles = "files/webfiles";
     
     W3Cmf() throws Exception {
         startup();
+    }
+    
+    public void SetWebFilesPath(String path) {
+        webfiles = path;
     }
     
     private void startup() throws Exception {       
@@ -40,7 +45,7 @@ public class W3Cmf {
 
         context.addServlet(iboxServlet.class, "/");
         ServletHolder holderHome = new ServletHolder("static-home", DefaultServlet.class);
-        holderHome.setInitParameter("resourceBase","files/webfiles");
+        holderHome.setInitParameter("resourceBase",webfiles);
         holderHome.setInitParameter("dirAllowed","true");
         holderHome.setInitParameter("pathInfoOnly","true");
         context.addServlet(holderHome,"/files/*");

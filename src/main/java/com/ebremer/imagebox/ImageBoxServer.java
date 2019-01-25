@@ -16,6 +16,12 @@ import javax.swing.JFrame;
  * @author Erich Bremer
  */
 public class ImageBoxServer extends Thread {
+    
+    String webfiles = "files/webfiles";
+    
+    public void SetWebFilesPath(String path) {
+        webfiles = path;
+    }
       
     @Override
     public void run() {
@@ -23,6 +29,7 @@ public class ImageBoxServer extends Thread {
         W3Cmf srv = null;
         try {
             srv = new W3Cmf();
+            srv.SetWebFilesPath(webfiles);
         } catch (BindException ex) {
             final JFrame parent = new JFrame();
             JButton button = new JButton();
