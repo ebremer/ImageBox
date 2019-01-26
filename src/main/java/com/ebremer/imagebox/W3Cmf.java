@@ -45,6 +45,7 @@ public class W3Cmf {
 
         context.addServlet(iboxServlet.class, "/");
         ServletHolder holderHome = new ServletHolder("static-home", DefaultServlet.class);
+        System.out.println("Setting webfiles locations to : "+webfiles);
         holderHome.setInitParameter("resourceBase",webfiles);
         holderHome.setInitParameter("dirAllowed","true");
         holderHome.setInitParameter("pathInfoOnly","true");
