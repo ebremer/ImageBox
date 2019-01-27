@@ -22,12 +22,21 @@ public class W3Cmf {
     int port = 8888;
     String webfiles = "files/webfiles";
     
-    W3Cmf() throws Exception {
+    public W3Cmf() throws Exception {
+        startup();
+    }
+    
+    public W3Cmf(String path) throws Exception {
+        webfiles = path;
         startup();
     }
     
     public void SetWebFilesPath(String path) {
+        System.out.println("SetWebFilesPath...");
+        System.out.println("Current locations : "+webfiles);
+        System.out.println("Attempting to set to : "+path);
         webfiles = path;
+        System.out.println("new path is : "+webfiles);
     }
     
     private void startup() throws Exception {       
@@ -45,7 +54,6 @@ public class W3Cmf {
 
         context.addServlet(iboxServlet.class, "/");
         ServletHolder holderHome = new ServletHolder("static-home", DefaultServlet.class);
-        System.out.println("Setting webfiles locations to : "+webfiles);
         holderHome.setInitParameter("resourceBase",webfiles);
         holderHome.setInitParameter("dirAllowed","true");
         holderHome.setInitParameter("pathInfoOnly","true");

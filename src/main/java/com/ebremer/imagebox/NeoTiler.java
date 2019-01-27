@@ -106,7 +106,7 @@ public class NeoTiler {
         pa = new long[numi];
         pr = new int[numi];
         System.out.println("series count : "+reader.getSeriesCount());
-        for (int j=0;j<=reader.getSeriesCount()-1;j++) {
+        for (int j=0;j<=reader.getSeriesCount()-2;j++) {
             CoreMetadata big = reader.getCoreMetadataList().get(j);
             px[j] = big.sizeX;
             py[j] = big.sizeY;

@@ -17,19 +17,24 @@ import javax.swing.JFrame;
  */
 public class ImageBoxServer extends Thread {
     
-    String webfiles = "files/webfiles";
+    String webfiles;
     
-    public void SetWebFilesPath(String path) {
+    public ImageBoxServer() {
+        webfiles = "files/webfiles";
+        System.out.println("Initializing ImageBoxServer with default webfiles path : "+webfiles);
+    }
+    
+    public ImageBoxServer(String path) {
+        System.out.println("Initializing ImageBoxServer with webfiles path : "+path);
         webfiles = path;
     }
       
     @Override
     public void run() {
-        System.out.println("Starting ImageBox Version 1.0");
+        System.out.println("Starting ImageBox Version 1.0.4");
         W3Cmf srv = null;
         try {
-            srv = new W3Cmf();
-            srv.SetWebFilesPath(webfiles);
+            srv = new W3Cmf(webfiles);
         } catch (BindException ex) {
             final JFrame parent = new JFrame();
             JButton button = new JButton();
