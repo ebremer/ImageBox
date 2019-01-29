@@ -3,6 +3,7 @@ package com.ebremer.imagebox;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -18,10 +19,6 @@ import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
-import loci.formats.in.OMETiffReader;
-import loci.formats.in.PyramidTiffReader;
-import loci.formats.in.SVSReader;
-import loci.formats.in.TiffReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -33,7 +30,7 @@ import ome.xml.model.primitives.PositiveInteger;
  * @author erich
  */
 public class NeoTiler {
-    private String iri;
+    //private String iri;
     private int x;
     private int y;
     private int w;
@@ -56,10 +53,10 @@ public class NeoTiler {
     private double mppx;
     private double mppy;
     
-    public NeoTiler(String iri, int x, int y, int w, int h, int tx, int ty) {
+    public NeoTiler(File f, int x, int y, int w, int h, int tx, int ty) {
         DebugTools.enableLogging("ERROR");
-        System.out.println("NeoTiler : "+iri+" : "+x+","+y+","+w+","+h+","+tx+","+ty);
-        this.iri = iri;
+        System.out.println("NeoTiler : "+f.getPath()+" : "+x+","+y+","+w+","+h+","+tx+","+ty);
+        //this.iri = iri;
         this.x = x;
         this.y = y;
         this.w = w;
@@ -74,7 +71,7 @@ public class NeoTiler {
             factory = new ServiceFactory();
             service = factory.getInstance(OMEXMLService.class);
             reader.setMetadataStore(service.createOMEXMLMetadata(null, null));
-            reader.setId(iri);
+            reader.setId(f.getPath());
             store = reader.getMetadataStore();
             MetadataTools.populatePixels(store, reader, false, false);
             reader.setSeries(0);
@@ -86,9 +83,12 @@ public class NeoTiler {
         newRoot = (OMEXMLMetadataRoot) meta.getRoot();
         iWidth = reader.getSizeX();
         iHeight = reader.getSizeY();
-        numi = reader.getCoreMetadataList().size();
+        numi = reader.getSeriesCount();
+        System.out.println("series count : "+numi);
+        if (numi>2) {
+            numi = numi-2;
+        }
         Hashtable hh = reader.getSeriesMetadata();
-        
         Enumeration ee = hh.keys();
         while (ee.hasMoreElements()) {
             String ya = (String) ee.nextElement();
@@ -105,8 +105,8 @@ public class NeoTiler {
         py = new int[numi];
         pa = new long[numi];
         pr = new int[numi];
-        System.out.println("series count : "+reader.getSeriesCount());
-        for (int j=0;j<=reader.getSeriesCount()-2;j++) {
+        
+        for (int j=0;j<numi;j++) {
             CoreMetadata big = reader.getCoreMetadataList().get(j);
             px[j] = big.sizeX;
             py[j] = big.sizeY;
@@ -126,7 +126,8 @@ public class NeoTiler {
         //System.out.println(x+" "+y+" "+w+" "+h+" "+tx+" "+ty);
         int iratio = w/tx;
         int jj = 0;
-        while ((jj<4)&&(iratio>pr[jj])) {
+        while ((jj<numi-1)&&(iratio>pr[jj])) {
+            //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> "+jj+"  "+pr[jj]+"   "+numi+"  "+iratio);
             jj++;
         }
         //System.out.println(iratio+" picked "+jj+" "+pr[jj]);

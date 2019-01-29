@@ -1,5 +1,4 @@
 com\ebremer\imagebox\iboxServlet.class
 com\ebremer\imagebox\NeoTiler.class
-com\ebremer\imagebox\GetAnImage.class
 com\ebremer\imagebox\W3Cmf.class
 com\ebremer\imagebox\IIIF.class

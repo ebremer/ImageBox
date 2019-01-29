@@ -5,6 +5,8 @@
 
 package com.ebremer.imagebox;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +21,7 @@ public class IIIF {
     public String protocol = null;
     public String domain = null;
     public String port = null;
-    public String uri = null;
+    public URI uri = null;
     public int x;
     public int y;
     public int w;
@@ -30,14 +32,14 @@ public class IIIF {
     public boolean tilerequest = false;
     public boolean inforequest = false;
 
-    IIIF(String url) {
+    IIIF(String url) throws URISyntaxException {
         matcher = pattern.matcher(url);
         if (matcher.find()) {
             tilerequest = true;
             protocol = matcher.group(1);
             domain = matcher.group(2);
             port = matcher.group(3);
-            uri = matcher.group(4);
+            uri = new URI(matcher.group(4));
             x = Integer.parseInt(matcher.group(5));
             y = Integer.parseInt(matcher.group(6));
             w = Integer.parseInt(matcher.group(7));
@@ -47,12 +49,12 @@ public class IIIF {
         } else {
             matcher = info.matcher(url);
             if (matcher.find()) {
-                System.out.println("info request "+url);
+                //System.out.println("info request "+url);
                 inforequest = true;
                 protocol = matcher.group(1);
                 domain = matcher.group(2);
                 port = matcher.group(3);
-                uri = matcher.group(4);
+                uri = new URI(matcher.group(4));
             }
         }
         //System.out.println("IIIF : ****"+url+"*****");
