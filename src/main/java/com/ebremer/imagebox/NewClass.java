@@ -46,6 +46,7 @@ public class NewClass {
             service = factory.getInstance(OMEXMLService.class);
             reader.setMetadataStore(service.createOMEXMLMetadata(null, null));
             reader.setId("D:\\WSI\\20180504\\001738-000002_02_20180504.vsi");
+            //reader.setId("D:\\WSI\\japan\\61618.svs");
             store = reader.getMetadataStore();
             MetadataTools.populatePixels(store, reader, false, false);
             reader.setSeries(0);
@@ -54,7 +55,10 @@ public class NewClass {
         } catch (DependencyException | ServiceException | FormatException | IOException ex) {
             Logger.getLogger(NeoTiler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //reader.setFlattenedResolutions(false);
+        System.out.println("hasFlattenedResolutions : "+reader.hasFlattenedResolutions());
+        System.out.println("num resolutions : "+reader.getResolutionCount());
+        reader.setFlattenedResolutions(true);
+        
         System.out.println("series count : "+reader.getSeriesCount());
 
         Hashtable hh = reader.getSeriesMetadata();

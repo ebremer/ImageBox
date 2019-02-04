@@ -55,7 +55,6 @@ public class NeoTiler {
     public NeoTiler(File f, int x, int y, int w, int h, int tx, int ty) {
         DebugTools.enableLogging("ERROR");
         System.out.println("NeoTiler : "+f.getPath()+" : "+x+","+y+","+w+","+h+","+tx+","+ty);
-        //this.iri = iri;
         this.x = x;
         this.y = y;
         this.w = w;
@@ -84,9 +83,9 @@ public class NeoTiler {
         if (f.getName().endsWith(".vsi")) {
             lowerbound = MaxImage(reader);
         }
-        if (numi>2) {
-            numi = numi-4;
-        }
+        //if (numi>2) {
+//            numi = numi-2;
+  //      }
         //System.out.println("lower bound : "+lowerbound);
         //System.out.println("upper bound : "+(numi+lowerbound));
         //System.out.println("series count : "+numi);
@@ -130,9 +129,6 @@ public class NeoTiler {
             pr[j] = px[0]/px[j];
             System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
         }
-//        if (numi>2) {
-//            numi = numi-4;
-//        }
         reader.setSeries(lowerbound);
         iWidth = reader.getSizeX();
         iHeight = reader.getSizeY();
@@ -183,10 +179,12 @@ public class NeoTiler {
         //System.out.println("FetchImage : "+x+" "+y+" "+w+" "+h+" "+tx+" "+ty);
         int iratio = w/tx;
         int jj = 0;
+        //System.out.println("numi : "+numi+" "+iratio);
         while ((jj<numi-1)&&(iratio>pr[jj])) {
             //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> "+jj+"  "+pi[jj]+" "+pr[jj]+"   "+numi+"  "+iratio);
             jj++;
         }
+        //System.out.println("J : "+jj);
         //System.out.println(iratio+" picked "+jj+" "+pi[jj]+" "+pr[jj]);
         //int oratio = pr[jj];
         reader.setSeries(pi[jj]);
