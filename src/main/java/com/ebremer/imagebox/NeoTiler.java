@@ -5,10 +5,14 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonWriter;
 import loci.common.DebugTools;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
@@ -29,12 +33,12 @@ import ome.xml.model.primitives.PositiveInteger;
  * @author erich
  */
 public class NeoTiler {
-    private int x;
-    private int y;
-    private int w;
-    private int h;
-    private int tx;
-    private int ty;
+    //private int x;
+    //private int y;
+    //private int w;
+    //private int h;
+    //private int tx;
+    //private int ty;
     private ImageReader reader;
     private ServiceFactory factory;
     private OMEXMLService service;
@@ -51,16 +55,18 @@ public class NeoTiler {
     private final int[] pi;
     private double mppx;
     private double mppy;
+    private boolean borked = false;
+    private String status = "";
     
     public NeoTiler(File f, int x, int y, int w, int h, int tx, int ty) {
         DebugTools.enableLogging("ERROR");
         System.out.println("NeoTiler : "+f.getPath()+" : "+x+","+y+","+w+","+h+","+tx+","+ty);
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
-        this.tx = tx;
-        this.ty = ty;
+        //this.x = x;
+        //this.y = y;
+        //this.w = w;
+        //this.h = h;
+        //this.tx = tx;
+        //this.ty = ty;
         reader = new ImageReader();
         reader.setGroupFiles(true);
         reader.setMetadataFiltered(true);
@@ -75,64 +81,84 @@ public class NeoTiler {
             reader.setSeries(0);
             String xml = service.getOMEXML(service.asRetrieve(store));
             meta = service.createOMEXMLMetadata(xml);
-        } catch (DependencyException | ServiceException | FormatException | IOException ex) {
+        } catch (DependencyException | ServiceException | IOException ex) {
             Logger.getLogger(NeoTiler.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FormatException ex) {
+            borked = true;
+            status = ex.getMessage();
         }
-        newRoot = (OMEXMLMetadataRoot) meta.getRoot();
-        numi = reader.getSeriesCount();
-        if (f.getName().endsWith(".vsi")) {
-            lowerbound = MaxImage(reader);
-        }
+        if (!borked) {
+            newRoot = (OMEXMLMetadataRoot) meta.getRoot();
+            numi = reader.getSeriesCount();
+            if (f.getName().endsWith(".vsi")) {
+                lowerbound = MaxImage(reader);
+            }
         //if (numi>2) {
 //            numi = numi-2;
   //      }
         //System.out.println("lower bound : "+lowerbound);
         //System.out.println("upper bound : "+(numi+lowerbound));
         //System.out.println("series count : "+numi);
-        Hashtable hh = reader.getSeriesMetadata();
-        Enumeration ee = hh.keys();
+            Hashtable hh = reader.getSeriesMetadata();
+            Enumeration ee = hh.keys();
         //while (ee.hasMoreElements()) {
 //            String ya = (String) ee.nextElement();
 //            System.out.println("*****>>>>> "+ya);
 //        }
-        System.out.println(hh.get("MPP"));
-        if (hh.containsKey("MPP")) {
-            System.out.println("extracting mpp metadata...");
-            double mpp = Double.parseDouble((String) hh.get("MPP"));
-            mppx = mpp;
-            mppy = mpp;
+            System.out.println(hh.get("MPP"));
+            if (hh.containsKey("MPP")) {
+                System.out.println("extracting mpp metadata...");
+                double mpp = Double.parseDouble((String) hh.get("MPP"));
+                mppx = mpp;
+                mppy = mpp;
+            }
+            numi = numi - lowerbound;
+            px = new int[numi];
+            py = new int[numi];
+            pr = new int[numi];
+            pi = new int[numi];
+            System.out.println("=============================================================");
+            for (int j=0;j<reader.getSeriesCount();j++) {
+                CoreMetadata big = reader.getCoreMetadataList().get(j);
+                System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((double) big.sizeX)/((double)big.sizeY)));
+            }
+            System.out.println("=============================================================");
+            //System.out.println("lower bound : "+lowerbound);
+            //System.out.println("upper bound : "+numi);
+            for (int j=lowerbound;j<(numi+lowerbound);j++) {
+                CoreMetadata big = reader.getCoreMetadataList().get(j);
+                int offset = j-lowerbound;
+                px[offset] = big.sizeX;
+                py[offset] = big.sizeY;
+                pr[offset] = px[0]/px[offset];
+                pi[offset] = j;
+                System.out.println(offset+" >>> "+pi[offset]+" "+pr[offset]+"  "+px[offset]+","+py[offset]);
+            }
+            SortImages();
+            for (int j=0;j<numi;j++) {
+                pr[j] = px[0]/px[j];
+                System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
+            }
+            reader.setSeries(lowerbound);
+            iWidth = reader.getSizeX();
+            iHeight = reader.getSizeY();
+            System.out.println(iWidth+":::"+iHeight);
+        } else {
+            iWidth = 0;
+            iHeight = 0;            
+            px = null;
+            py = null;
+            pr = null;
+            pi = null;
         }
-        numi = numi - lowerbound;
-        px = new int[numi];
-        py = new int[numi];
-        pr = new int[numi];
-        pi = new int[numi];
-        System.out.println("=============================================================");
-        for (int j=0;j<reader.getSeriesCount();j++) {
-            CoreMetadata big = reader.getCoreMetadataList().get(j);
-            System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((double) big.sizeX)/((double)big.sizeY)));
-        }
-        System.out.println("=============================================================");
-        //System.out.println("lower bound : "+lowerbound);
-        //System.out.println("upper bound : "+numi);
-        for (int j=lowerbound;j<(numi+lowerbound);j++) {
-            CoreMetadata big = reader.getCoreMetadataList().get(j);
-            int offset = j-lowerbound;
-            px[offset] = big.sizeX;
-            py[offset] = big.sizeY;
-            pr[offset] = px[0]/px[offset];
-            pi[offset] = j;
-            System.out.println(offset+" >>> "+pi[offset]+" "+pr[offset]+"  "+px[offset]+","+py[offset]);
-        }
-        SortImages();
-        for (int j=0;j<numi;j++) {
-            pr[j] = px[0]/px[j];
-            System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
-        }
-        reader.setSeries(lowerbound);
-        iWidth = reader.getSizeX();
-        iHeight = reader.getSizeY();
-        System.out.println(iWidth+":::"+iHeight);
+    }
+    
+    public boolean isBorked() {
+        return borked;
+    }
+    
+    public String getStatus() {
+        return status;
     }
     
     public int MaxImage(ImageReader reader) {
@@ -171,8 +197,23 @@ public class NeoTiler {
     }
     
     public String GetImageInfo() {
-        String info = "{\"height\": "+iHeight+", \"width\": "+iWidth+", \"mpp-x\": "+mppx+", \"mpp-y\": "+mppy+"}";
-        return info;
+        JsonObject model;
+        if (borked) {
+            model = Json.createObjectBuilder()
+                .add("status", status).build();
+        } else {
+            model = Json.createObjectBuilder()
+                .add("height", iHeight)
+                .add("width", iWidth)
+                .add("mpp-x", mppx)
+                .add("mpp-y", mppy)
+                .build();
+        }
+        StringWriter stWriter = new StringWriter();
+        try (JsonWriter jsonWriter = Json.createWriter(stWriter)) {
+            jsonWriter.writeObject(model);
+        }
+        return stWriter.toString();
     }
     
     public synchronized BufferedImage FetchImage(int x, int y, int w, int h, int tx, int ty) {

@@ -5,13 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.nio.file.FileSystems;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
@@ -22,8 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  *
@@ -139,7 +132,13 @@ public class iboxServlet extends HttpServlet {
                     this.getServletConfig().getServletContext().setAttribute("image", image);
                 }
             }
-            if (i.tilerequest) {
+            if (nt.isBorked()) {
+                response.setContentType("application/json");
+                response.setStatus(500);
+                PrintWriter writer=response.getWriter();
+                writer.append(nt.GetImageInfo());
+                writer.flush();                
+            } else if (i.tilerequest) {
                 BufferedImage originalImage;
                 originalImage = nt.FetchImage(i.x, i.y, i.w, i.h, i.tx, i.tx);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
