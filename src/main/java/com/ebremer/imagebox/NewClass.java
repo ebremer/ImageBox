@@ -6,7 +6,6 @@
 package com.ebremer.imagebox;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +20,6 @@ import loci.formats.MetadataTools;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
-import ome.xml.meta.OMEXMLMetadataRoot;
 import org.slf4j.LoggerFactory;
 
 /**

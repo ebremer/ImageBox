@@ -42,8 +42,7 @@ public class W3Cmf {
     private void startup() throws Exception {       
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(port);
-        server.addConnector(connector);
-     
+        server.addConnector(connector);    
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         server.setHandler(context);
@@ -51,7 +50,6 @@ public class W3Cmf {
         SessionCache cache = new DefaultSessionCache(sessions);
         cache.setSessionDataStore(new NullSessionDataStore());
         sessions.setSessionCache(cache);
-
         context.addServlet(iboxServlet.class, "/");
         ServletHolder holderHome = new ServletHolder("static-home", DefaultServlet.class);
         holderHome.setInitParameter("resourceBase",webfiles);

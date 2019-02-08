@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -23,9 +21,9 @@ import javax.servlet.http.HttpSession;
  * @author erich
  */
 public class iboxServlet extends HttpServlet {
-    final ConcurrentHashMap uris = new ConcurrentHashMap();
-    final ConcurrentHashMap transfers = new ConcurrentHashMap();
-    final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
+    //final ConcurrentHashMap uris = new ConcurrentHashMap();
+    //final ConcurrentHashMap transfers = new ConcurrentHashMap();
+    //final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
     String turi = null;
     long imageaquire;
     long imagetiled;
@@ -118,6 +116,8 @@ public class iboxServlet extends HttpServlet {
             }
             File image = FileSystems.getDefault().provider().getPath(i.uri).toAbsolutePath().toFile();
             NeoTiler nt = null;
+            nt = new NeoTiler(image,i.x,i.y,i.w,i.h,i.tx,i.tx);
+            /*
             synchronized(this) {
                 File lastimage = (File) this.getServletConfig().getServletContext().getAttribute("image");
                 if (lastimage==null) {
@@ -131,7 +131,7 @@ public class iboxServlet extends HttpServlet {
                     this.getServletConfig().getServletContext().setAttribute("neo", nt);
                     this.getServletConfig().getServletContext().setAttribute("image", image);
                 }
-            }
+            } */
             if (nt.isBorked()) {
                 response.setContentType("application/json");
                 response.setStatus(500);
