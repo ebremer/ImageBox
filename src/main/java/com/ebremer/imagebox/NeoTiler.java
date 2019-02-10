@@ -55,11 +55,12 @@ public class NeoTiler {
     private boolean borked = false;
     private String status = "";
     
-    public NeoTiler(File f, int x, int y, int w, int h, int tx, int ty) {
+    //public NeoTiler(File f, int x, int y, int w, int h, int tx, int ty) {
+    public NeoTiler(String f) {
         DebugTools.enableLogging("ERROR");
 //        System.out.println("NeoTiler : "+f.getPath()+" : "+x+","+y+","+w+","+h+","+tx+","+ty);
         warp = new ImageReader();
-        reader = new Memoizer(warp, 0L, f);
+        reader = new Memoizer(warp, 0L, new File("tmp"));
         reader.setGroupFiles(true);
         reader.setMetadataFiltered(true);
         reader.setOriginalMetadataPopulated(true);
@@ -67,7 +68,7 @@ public class NeoTiler {
             factory = new ServiceFactory();
             service = factory.getInstance(OMEXMLService.class);
             reader.setMetadataStore(service.createOMEXMLMetadata(null, null));
-            reader.setId(f.getPath());
+            reader.setId(f);
             store = reader.getMetadataStore();
             MetadataTools.populatePixels(store, reader, false, false);
             reader.setSeries(0);
@@ -82,7 +83,7 @@ public class NeoTiler {
         if (!borked) {
             newRoot = (OMEXMLMetadataRoot) meta.getRoot();
             numi = reader.getSeriesCount();
-            if (f.getName().endsWith(".vsi")) {
+            if (f.endsWith(".vsi")) {
                 lowerbound = MaxImage(reader);
             }
             Hashtable hh = reader.getSeriesMetadata();
