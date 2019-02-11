@@ -31,7 +31,7 @@ public class ImageBoxServer extends Thread {
       
     @Override
     public void run() {
-        System.out.println("Starting ImageBox Version 1.0.4");
+        System.out.println("Starting ImageBox Version 1.1.0");
         W3Cmf srv = null;
         try {
             srv = new W3Cmf(webfiles);

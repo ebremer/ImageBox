@@ -53,7 +53,7 @@ public class iboxServlet extends HttpServlet {
             NeoTiler nt;
             ImageReaderPool pool;
             if (session.isNew()) {
-                System.out.println("New session.  Creating pool...");
+                //System.out.println("New session.  Creating pool...");
                 pool = new ImageReaderPool();
                 session.setAttribute("pool", pool);
             } else {

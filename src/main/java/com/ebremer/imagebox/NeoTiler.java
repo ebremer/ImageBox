@@ -54,13 +54,19 @@ public class NeoTiler {
     private double mppy;
     private boolean borked = false;
     private String status = "";
+    private long lastaccessed;
     
     //public NeoTiler(File f, int x, int y, int w, int h, int tx, int ty) {
     public NeoTiler(String f) {
         DebugTools.enableLogging("ERROR");
+        lastaccessed = System.nanoTime();
 //        System.out.println("NeoTiler : "+f.getPath()+" : "+x+","+y+","+w+","+h+","+tx+","+ty);
+        File cache = new File("cache");
+        if (!cache.exists()) {
+            cache.mkdir();
+        }
         warp = new ImageReader();
-        reader = new Memoizer(warp, 0L, new File("tmp"));
+        reader = new Memoizer(warp, 0L, new File("cache"));
         reader.setGroupFiles(true);
         reader.setMetadataFiltered(true);
         reader.setOriginalMetadataPopulated(true);
@@ -86,7 +92,7 @@ public class NeoTiler {
             if (f.endsWith(".vsi")) {
                 lowerbound = MaxImage(reader);
             }
-            Hashtable hh = reader.getSeriesMetadata();
+            Hashtable<String, Object> hh = reader.getSeriesMetadata();
             Enumeration ee = hh.keys();
         //while (ee.hasMoreElements()) {
 //            String ya = (String) ee.nextElement();
@@ -144,6 +150,14 @@ public class NeoTiler {
     
     public String getStatus() {
         return status;
+    }
+    
+    public long GetLastAccess() {
+        return lastaccessed;
+    }
+    
+    public void UpdateLastAccess() {
+        lastaccessed = System.nanoTime();
     }
     
     public int MaxImage(Memoizer reader) {
