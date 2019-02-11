@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import static java.lang.Math.abs;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.logging.Level;
@@ -43,6 +44,7 @@ public class NeoTiler {
     private IMetadata meta;
     private OMEXMLMetadataRoot newRoot;
     private int lowerbound = 0;
+    private int upperbound = 0;
     private int numi;
     private final int iWidth;
     private final int iHeight;
@@ -50,13 +52,13 @@ public class NeoTiler {
     private final int[] py;
     private final int[] pr;
     private final int[] pi;
+    private final float[] pratio;
     private double mppx;
     private double mppy;
     private boolean borked = false;
     private String status = "";
     private long lastaccessed;
     
-    //public NeoTiler(File f, int x, int y, int w, int h, int tx, int ty) {
     public NeoTiler(String f) {
         DebugTools.enableLogging("ERROR");
         lastaccessed = System.nanoTime();
@@ -93,14 +95,13 @@ public class NeoTiler {
                 lowerbound = MaxImage(reader);
             }
             Hashtable<String, Object> hh = reader.getSeriesMetadata();
-            Enumeration ee = hh.keys();
+            //Enumeration ee = hh.keys();
         //while (ee.hasMoreElements()) {
 //            String ya = (String) ee.nextElement();
 //            System.out.println("*****>>>>> "+ya);
 //        }
   //          System.out.println(hh.get("MPP"));
             if (hh.containsKey("MPP")) {
-    //            System.out.println("extracting mpp metadata...");
                 double mpp = Double.parseDouble((String) hh.get("MPP"));
                 mppx = mpp;
                 mppy = mpp;
@@ -110,26 +111,46 @@ public class NeoTiler {
             py = new int[numi];
             pr = new int[numi];
             pi = new int[numi];
-      //      System.out.println("=============================================================");
-        //    for (int j=0;j<reader.getSeriesCount();j++) {
-          //      CoreMetadata big = reader.getCoreMetadataList().get(j);
-            //    System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((double) big.sizeX)/((double)big.sizeY)));
-           // }
-           // System.out.println("=============================================================");
+            pratio = new float[numi];
+            CoreMetadata big;
+            //System.out.println("=============================================================");
+            //for (int j=0;j<reader.getSeriesCount();j++) {
+              //  big = reader.getCoreMetadataList().get(j);
+                //System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
+            //}
+            //System.out.println("=============================================================");
+            big = reader.getCoreMetadataList().get(lowerbound);
+            float ratio = ((float) big.sizeX)/((float) big.sizeY);
             for (int j=lowerbound;j<(numi+lowerbound);j++) {
-                CoreMetadata big = reader.getCoreMetadataList().get(j);
+                big = reader.getCoreMetadataList().get(j);
                 int offset = j-lowerbound;
                 px[offset] = big.sizeX;
                 py[offset] = big.sizeY;
-                pr[offset] = px[0]/px[offset];
+                pr[offset] = px[lowerbound]/px[offset];
                 pi[offset] = j;
-             //   System.out.println(offset+" >>> "+pi[offset]+" "+pr[offset]+"  "+px[offset]+","+py[offset]);
+                float mi = (((float) big.sizeX)/((float)big.sizeY));
+                float off = abs((mi-ratio)/ratio);
+               // System.out.println("OFFNESS : "+off+ " "+ratio);
+                if (off>0.01) {
+                    px[offset] = 1;
+                    //System.out.println("nullifying : "+j);
+                }
+                //System.out.println(offset+" >>> "+pi[offset]+" "+pr[offset]+"  "+px[offset]+","+py[offset]);
             }
+            //System.out.println("=============================================================");
             SortImages();
+            upperbound = lowerbound + 1;
+            while ((upperbound<numi)&&(px[upperbound]>1024)) {
+                upperbound++;
+            }
+            //System.out.println("IIII : "+upperbound);
             for (int j=0;j<numi;j++) {
                 pr[j] = px[0]/px[j];
-               // System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
+                //System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
             }
+            numi = upperbound - lowerbound;
+            //System.out.println("lower bound : "+lowerbound);
+            //System.out.println("upper bound : "+upperbound);
             reader.setSeries(lowerbound);
             iWidth = reader.getSizeX();
             iHeight = reader.getSizeY();
@@ -141,6 +162,7 @@ public class NeoTiler {
             py = null;
             pr = null;
             pi = null;
+            pratio = null;
         }
     }
     
@@ -215,7 +237,6 @@ public class NeoTiler {
         return stWriter.toString();
     }
     
-    //public synchronized BufferedImage FetchImage(int x, int y, int w, int h, int tx, int ty) {
     public BufferedImage FetchImage(int x, int y, int w, int h, int tx, int ty) {
         //System.out.println("FetchImage : "+x+" "+y+" "+w+" "+h+" "+tx+" "+ty);
         int iratio = w/tx;
@@ -229,6 +250,7 @@ public class NeoTiler {
         //System.out.println(iratio+" picked "+jj+" "+pi[jj]+" "+pr[jj]);
         //int oratio = pr[jj];
         reader.setSeries(pi[jj]);
+        //System.out.println("pre ratio : "+reader.getSizeX()+ " "+iWidth);
         double rr = ((double) reader.getSizeX())/((double) iWidth);
         int gx=(int) (x*rr);
         int gy=(int) (y*rr);
@@ -246,6 +268,7 @@ public class NeoTiler {
     }
     
     private BufferedImage GrabImage(int xpos, int ypos, int width, int height) {
+        //System.out.println("grab image : "+xpos+ " "+ypos+" "+width+" "+height);
         meta.setRoot(newRoot);
         meta.setPixelsSizeX(new PositiveInteger(width), 0);
         meta.setPixelsSizeY(new PositiveInteger(height), 0);

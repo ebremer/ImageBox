@@ -39,6 +39,7 @@ public class ImageReaderPool {
                 pool.remove(id);
             }
         } else {
+            //System.out.println("creating new neotiler : "+id);
             reader = new NeoTiler(id);
         }
         return reader;
