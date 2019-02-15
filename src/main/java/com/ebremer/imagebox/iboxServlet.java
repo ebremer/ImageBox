@@ -68,7 +68,22 @@ public class iboxServlet extends HttpServlet {
                 writer.flush();                
             } else if (i.tilerequest) {
                 BufferedImage originalImage;
+                if (i.fullrequest) {
+                    i.x = 0;
+                    i.y = 0;
+                    i.w = nt.GetWidth();
+                    i.h = nt.GetHeight();
+                } else {
+                    if ((i.x+i.w)>nt.GetWidth()) {
+                        i.w = nt.GetWidth()-i.x;
+                    }
+                    if ((i.y+i.h)>nt.GetHeight()) {
+                        i.h = nt.GetHeight()-i.y;
+                    }                 
+                }
                 originalImage = nt.FetchImage(i.x, i.y, i.w, i.h, i.tx, i.tx);
+                int diff = originalImage.getWidth()-originalImage.getHeight();
+                //System.out.println(diff+"  "+originalImage.getWidth()+","+originalImage.getHeight()+" "+req);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write( originalImage, "jpg", baos );
                 baos.flush();

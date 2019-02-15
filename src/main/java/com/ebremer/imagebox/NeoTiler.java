@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import static java.lang.Math.abs;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -115,10 +114,10 @@ public class NeoTiler {
             CoreMetadata big;
             //System.out.println("=============================================================");
             //for (int j=0;j<reader.getSeriesCount();j++) {
-              //  big = reader.getCoreMetadataList().get(j);
-                //System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
-            //}
-            //System.out.println("=============================================================");
+//                big = reader.getCoreMetadataList().get(j);
+//                System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
+//            }
+  //          System.out.println("=============================================================");
             big = reader.getCoreMetadataList().get(lowerbound);
             float ratio = ((float) big.sizeX)/((float) big.sizeY);
             for (int j=lowerbound;j<(numi+lowerbound);j++) {
@@ -154,7 +153,7 @@ public class NeoTiler {
             reader.setSeries(lowerbound);
             iWidth = reader.getSizeX();
             iHeight = reader.getSizeY();
-            //System.out.println(iWidth+":::"+iHeight);
+    //        System.out.println(iWidth+":::"+iHeight);
         } else {
             iWidth = 0;
             iHeight = 0;            
@@ -165,6 +164,14 @@ public class NeoTiler {
             pratio = null;
         }
     }
+    
+    public int GetWidth() {
+        return iWidth;
+    }
+    
+    public int GetHeight() {
+        return iHeight;
+    }    
     
     public boolean isBorked() {
         return borked;
@@ -252,6 +259,7 @@ public class NeoTiler {
         reader.setSeries(pi[jj]);
         //System.out.println("pre ratio : "+reader.getSizeX()+ " "+iWidth);
         double rr = ((double) reader.getSizeX())/((double) iWidth);
+        //System.out.println("Ratio : "+rr);
         int gx=(int) (x*rr);
         int gy=(int) (y*rr);
         int gw=(int) (w*rr);
@@ -262,7 +270,7 @@ public class NeoTiler {
         double scale = (((double) tx)/((double) bi.getWidth()));
         at.scale(scale,scale);
         AffineTransformOp scaleOp =  new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-        target = new BufferedImage(tx,ty,bi.getType());
+        target = new BufferedImage((int)(gw*scale),(int)(gh*scale),bi.getType());
         scaleOp.filter(bi, target);
         return target;
     }

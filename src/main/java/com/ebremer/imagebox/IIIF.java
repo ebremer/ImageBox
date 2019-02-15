@@ -15,7 +15,8 @@ import java.util.regex.Pattern;
  * @author Erich Bremer
  */
 public class IIIF {
-    private static final Pattern pattern = Pattern.compile("(https?://)([^:^/]*)(:\\d*)?/bog/(.*)?/(\\d*),(\\d*),(\\d*),(\\d*)/(\\d*),/(\\d*)/default.jpg");
+    private static final Pattern pattern1 = Pattern.compile("(https?://)([^:^/]*)(:\\d*)?/bog/(.*)?/(\\d*),(\\d*),(\\d*),(\\d*)/(\\d*),/(\\d*)/default.jpg");
+    private static final Pattern pattern2 = Pattern.compile("(https?://)([^:^/]*)(:\\d*)?/bog/(.*)?/full/(\\d*),/(\\d*)/default.jpg");
     private static final Pattern info = Pattern.compile("(https?://)([^:^/]*)(:\\d*)?/bog/(.*)?/info.js");
     private Matcher matcher;
     public String protocol = null;
@@ -31,9 +32,10 @@ public class IIIF {
     public int rotation;
     public boolean tilerequest = false;
     public boolean inforequest = false;
+    public boolean fullrequest = false;
 
     IIIF(String url) throws URISyntaxException {
-        matcher = pattern.matcher(url);
+        matcher = pattern1.matcher(url);
         if (matcher.find()) {
             tilerequest = true;
             protocol = matcher.group(1);
@@ -55,6 +57,22 @@ public class IIIF {
                 domain = matcher.group(2);
                 port = matcher.group(3);
                 uri = new URI(matcher.group(4));
+            } else {
+                matcher = pattern2.matcher(url);
+                if (matcher.find()) {
+                    tilerequest = true;
+                    protocol = matcher.group(1);
+                    domain = matcher.group(2);
+                    port = matcher.group(3);
+                    uri = new URI(matcher.group(4));
+                    x = 0;
+                    y = 0;
+                    w = Integer.MAX_VALUE;
+                    h = Integer.MAX_VALUE;
+                    tx = Integer.parseInt(matcher.group(5));
+                    rotation = Integer.parseInt(matcher.group(6));
+                    fullrequest = true;
+                }
             }
         }
         //System.out.println("IIIF : ****"+url+"*****");
