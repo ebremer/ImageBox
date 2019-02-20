@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class    hashy {
     
     public static void main(String[] args) {
-        HashMap<String, Integer> numbers = new HashMap<String, Integer>();
+        HashMap<String, Integer> numbers = new HashMap<>();
         numbers.put("one", 1);
         numbers.put("two", 2);
         numbers.put("three", 3);
