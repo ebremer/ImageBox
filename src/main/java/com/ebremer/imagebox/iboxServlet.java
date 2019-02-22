@@ -21,16 +21,6 @@ import javax.servlet.http.HttpSession;
  * @author erich
  */
 public class iboxServlet extends HttpServlet {
-    //final ConcurrentHashMap uris = new ConcurrentHashMap();
-    //final ConcurrentHashMap transfers = new ConcurrentHashMap();
-    //final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
-
-    @Override
-    protected void doPost( HttpServletRequest request,HttpServletResponse response ) throws ServletException,IOException {
-         //       } else if (req.startsWith("/upload")) {
-            System.out.println("UPLOADER...");
-            System.out.println(request.getParameter("UserFile"));
-    }
     
     @Override
     protected void doGet( HttpServletRequest request,HttpServletResponse response ) throws ServletException,IOException {
@@ -82,7 +72,6 @@ public class iboxServlet extends HttpServlet {
                     }                 
                 }
                 originalImage = nt.FetchImage(i.x, i.y, i.w, i.h, i.tx, i.tx);
-                int diff = originalImage.getWidth()-originalImage.getHeight();
                 //System.out.println(diff+"  "+originalImage.getWidth()+","+originalImage.getHeight()+" "+req);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write( originalImage, "jpg", baos );
@@ -106,21 +95,3 @@ public class iboxServlet extends HttpServlet {
         }
     }
 }
-
-
-/*
-            synchronized(this) {
-                File lastimage = (File) this.getServletConfig().getServletContext().getAttribute("image");
-                if (lastimage==null) {
-                    nt = new NeoTiler(image,i.x,i.y,i.w,i.h,i.tx,i.tx);
-                    this.getServletConfig().getServletContext().setAttribute("neo", nt);
-                    this.getServletConfig().getServletContext().setAttribute("image", image);
-                } else if (lastimage.equals(image)) {
-                    nt = (NeoTiler) this.getServletConfig().getServletContext().getAttribute("neo");
-                } else {
-                    nt = new NeoTiler(image,i.x,i.y,i.w,i.h,i.tx,i.tx);
-                    this.getServletConfig().getServletContext().setAttribute("neo", nt);
-                    this.getServletConfig().getServletContext().setAttribute("image", image);
-                }
-            } 
-*/
