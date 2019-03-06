@@ -14,15 +14,18 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonWriter;
 import loci.common.DebugTools;
+import loci.common.Location;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
+import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
+import loci.formats.in.SVSReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -34,7 +37,7 @@ import ome.xml.model.primitives.PositiveInteger;
  * @author erich
  */
 public class NeoTiler {
-    private ImageReader warp;
+    private IFormatReader warp;
     private static final File f = new File("tmp");
     private Memoizer reader;
     private ServiceFactory factory;
@@ -61,12 +64,20 @@ public class NeoTiler {
     public NeoTiler(String f) {
         DebugTools.enableLogging("ERROR");
         lastaccessed = System.nanoTime();
-//        System.out.println("NeoTiler : "+f.getPath()+" : "+x+","+y+","+w+","+h+","+tx+","+ty);
+        System.out.println("NeoTiler : "+f);
+        String getthis = null;
+        if (f.startsWith("http")) {
+            HTTPIRandomAccess3 bbb = new HTTPIRandomAccess3(f);
+            Location.mapFile("charm", bbb);
+            getthis = "charm";
+        } else {
+            getthis = f;
+        }
         File cache = new File("cache");
         if (!cache.exists()) {
             cache.mkdir();
         }
-        warp = new ImageReader();
+        warp = new SVSReader();
         reader = new Memoizer(warp, 0L, new File("cache"));
         reader.setGroupFiles(true);
         reader.setMetadataFiltered(true);
@@ -75,7 +86,7 @@ public class NeoTiler {
             factory = new ServiceFactory();
             service = factory.getInstance(OMEXMLService.class);
             reader.setMetadataStore(service.createOMEXMLMetadata(null, null));
-            reader.setId(f);
+            reader.setId(getthis);
             store = reader.getMetadataStore();
             MetadataTools.populatePixels(store, reader, false, false);
             reader.setSeries(0);
@@ -90,7 +101,7 @@ public class NeoTiler {
         if (!borked) {
             newRoot = (OMEXMLMetadataRoot) meta.getRoot();
             numi = reader.getSeriesCount();
-            if (f.endsWith(".vsi")) {
+            if (getthis.endsWith(".vsi")) {
                 lowerbound = MaxImage(reader);
             }
             Hashtable<String, Object> hh = reader.getSeriesMetadata();

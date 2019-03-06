@@ -71,7 +71,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     private long numreadInt = 0;
     
     HTTPIRandomAccess3(String url) {
-        System.out.println("HTTPIRandomAccess3 initializing...");
+        //System.out.println("HTTPIRandomAccess3 initializing...");
         tm = new TreeMap<>();
         this.url = url;
         if (httpClient == null) {
@@ -85,7 +85,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
             }
             String mimetype = "application/octet-stream";
             InputStreamResponseListener listener = new InputStreamResponseListener();
-            System.out.println("URL : "+this.url);
+            //System.out.println("URL : "+this.url);
             httpClient.newRequest(this.url).method(HttpMethod.HEAD).header("Accept", mimetype).send(listener);
             Response response = null;
             try {
@@ -93,10 +93,10 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
             } catch (InterruptedException | TimeoutException | ExecutionException ex) {
                 Logger.getLogger(HTTPIRandomAccess3.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("Response : "+response.getStatus());
+            //System.out.println("Response : "+response.getStatus());
             if (response.getStatus() == 200) {
                 this.length = response.getHeaders().getField(HttpHeader.CONTENT_LENGTH).getLongValue();
-                System.out.println("Content Length : "+length);
+                //System.out.println("Content Length : "+length);
                 try {
                     seek(0L);
                 } catch (IOException ex) {
@@ -259,13 +259,15 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     }
 
     @Override
-    public void readFully(byte[] b) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void readFully(byte[] b) {
+        System.out.println("readFully");
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void readFully(byte[] b, int off, int len) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void readFully(byte[] b, int off, int len) {
+        System.out.println("readFully "+off+" "+len);
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -529,6 +531,5 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     @Override
     public long skipBytes(long l) throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+    }   
 }

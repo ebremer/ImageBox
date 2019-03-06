@@ -32,24 +32,29 @@ public class iboxServlet extends HttpServlet {
             // give them something here, at somepoint, for favicon.ico thing
         } else if (req.startsWith("/bog/")) {
             //System.out.println("REQ : "+req);
-            req = "http://localhost:8888"+req;
             IIIF i = null;
             try {
                 i = new IIIF(req);
             } catch (URISyntaxException ex) {
                 Logger.getLogger(iboxServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            File image = FileSystems.getDefault().provider().getPath(i.uri).toAbsolutePath().toFile();
-            NeoTiler nt;
+            NeoTiler nt = null;
             ImageReaderPool pool;
+            String target = null;
             if (session.isNew()) {
-                //System.out.println("New session.  Creating pool...");
                 pool = new ImageReaderPool();
                 session.setAttribute("pool", pool);
             } else {
                 pool = (ImageReaderPool) session.getAttribute("pool");
             }
-            nt = pool.GetReader(image.getPath());
+            if (i.uri.getScheme().startsWith("http")) {
+                target = i.uri.toString();
+                nt = pool.GetReader(target);                
+            } else if (i.uri.getScheme().startsWith("file"))  {
+                File image = FileSystems.getDefault().provider().getPath(i.uri).toAbsolutePath().toFile();
+                target = image.getPath();
+                nt = pool.GetReader(target);
+            }
             if (nt.isBorked()) {
                 response.setContentType("application/json");
                 response.setStatus(500);
@@ -72,7 +77,6 @@ public class iboxServlet extends HttpServlet {
                     }                 
                 }
                 originalImage = nt.FetchImage(i.x, i.y, i.w, i.h, i.tx, i.tx);
-                //System.out.println(diff+"  "+originalImage.getWidth()+","+originalImage.getHeight()+" "+req);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write( originalImage, "jpg", baos );
                 baos.flush();
@@ -89,7 +93,7 @@ public class iboxServlet extends HttpServlet {
             } else {
                 System.out.println("unknown IIIF request");
             }
-            pool.ReturnReader(image.getPath(), nt);
+            pool.ReturnReader(target, nt);
         } else {
             System.out.println("NO IDEA WHAT YOU WANT FROM ME "+req);
         }
