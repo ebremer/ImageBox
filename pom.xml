@@ -24,7 +24,7 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>9.4.11.v20180605</version>
+            <version>9.4.14.v20181114</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -70,7 +70,7 @@
                     <shadedArtifactAttached>false</shadedArtifactAttached>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>edu.stonybrook.bmi.nanoborb.MainFrame</mainClass>
+                            <mainClass>com.ebremer.imagebox.W3Cmf</mainClass>
                         </transformer>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />

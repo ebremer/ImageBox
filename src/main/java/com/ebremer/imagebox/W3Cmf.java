@@ -1,6 +1,7 @@
 package com.ebremer.imagebox;
 
 import ch.qos.logback.classic.Level;
+import java.net.URL;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.session.DefaultSessionCache;
@@ -17,7 +18,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author erich
  */
-public class W3Cmf {
+    public class W3Cmf {
     final Server server = new Server();
     int port = 8888;
     String webfiles = "files/webfiles";
@@ -39,7 +40,14 @@ public class W3Cmf {
         System.out.println("new path is : "+webfiles);
     }
     
-    private void startup() throws Exception {       
+    private void startup() throws Exception {
+        /*URL url = this.getClass().getClassLoader().getResource("webfiles");
+        String webDir = null;
+        if (url != null) {
+            webDir = url.toExternalForm();
+        } else {
+            System.out.println("nothing found");
+        } */     
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(port);
         server.addConnector(connector);    
@@ -66,15 +74,3 @@ public class W3Cmf {
         W3Cmf engine = new W3Cmf();
     }
 }
-
-        /* sticking this here out of the way.....
-        This chunk of code sets resource directory to jar file.  Saving for future use.  holderHome.setInitParameter("resourceBase",webDir);
-        URL url = this.getClass().getClassLoader().getResource("webfiles");
-        String webDir = null;
-        if (url != null) {
-            webDir = url.toExternalForm();
-        } else {
-            System.out.println("nothing found");
-        }
-        System.out.println(webDir);
-        */

@@ -31,7 +31,7 @@
           <shadedArtifactAttached>false</shadedArtifactAttached>
           <transformers>
             <transformer>
-              <mainClass>edu.stonybrook.bmi.nanoborb.MainFrame</mainClass>
+              <mainClass>com.ebremer.imagebox.W3Cmf</mainClass>
             </transformer>
             <transformer />
             <transformer />
