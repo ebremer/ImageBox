@@ -14,6 +14,7 @@ import java.nio.ByteOrder;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -52,10 +53,10 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
  */
 public class HTTPIRandomAccess3 implements IRandomAccess {
     private String url = null;
-    static HttpClient httpClient = null;
+    private HttpClient httpClient = null;
     private long length = -1;
     private long bufferstart = Integer.MAX_VALUE;
-    public long chunksize = (long) Math.pow(2,15 );
+    public long chunksize = (long) Math.pow(2,15);
     private long pos;
     private ByteArrayHandle bah;
     private ByteOrder order;
@@ -69,9 +70,10 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     private long avgrange = 0;
     private long numreadUnsignedShort = 0;
     private long numreadInt = 0;
+    private String uuid = UUID.randomUUID().toString();
     
     HTTPIRandomAccess3(String url) {
-        //System.out.println("HTTPIRandomAccess3 initializing...");
+        System.out.println("HTTPIRandomAccess3 initializing..."+uuid+" "+url);
         tm = new TreeMap<>();
         this.url = url;
         if (httpClient == null) {
@@ -93,19 +95,20 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
             } catch (InterruptedException | TimeoutException | ExecutionException ex) {
                 Logger.getLogger(HTTPIRandomAccess3.class.getName()).log(Level.SEVERE, null, ex);
             }
-            //System.out.println("Response : "+response.getStatus());
+            System.out.println("xxxResponse : "+response.getStatus());
             if (response.getStatus() == 200) {
                 this.length = response.getHeaders().getField(HttpHeader.CONTENT_LENGTH).getLongValue();
-                //System.out.println("Content Length : "+length);
+                System.out.println("Content Length : "+length);
                 try {
                     seek(0L);
                 } catch (IOException ex) {
                     Logger.getLogger(HTTPIRandomAccess3.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
-                System.out.println("Error detected on accessing : ("+response.getStatus()+") : "+url);
+                System.out.println("zamError detected on accessing!!! : ("+response.getStatus()+") : "+url);
             }
         }
+        System.out.println("init complete : "+this.length);
     }
 
     private void FillBuffer(long start, long len) {
@@ -142,7 +145,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
   
             }
         } else {
-            System.out.println("Error detected on accessing : ("+response.getStatus()+") : "+url);
+            System.out.println(this.uuid+"   dahaError detected on accessing : ("+response.getStatus()+") : "+url);
         }
         bah = new ByteArrayHandle(ByteBuffer.wrap(bytes));
         bah.setOrder(order);
@@ -516,7 +519,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
             throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
         } finally {
             try {
-                httpClient.stop();
+               // httpClient.stop();
             } catch (Exception ex) {
                 Logger.getLogger(HTTPIRandomAccess3.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -39,7 +39,8 @@ import ome.xml.model.primitives.PositiveInteger;
 public class NeoTiler {
     private IFormatReader warp;
     private static final File f = new File("tmp");
-    private Memoizer reader;
+    //private Memoizer reader;
+    private SVSReader reader;
     private ServiceFactory factory;
     private OMEXMLService service;
     private MetadataStore store;
@@ -77,8 +78,9 @@ public class NeoTiler {
         if (!cache.exists()) {
             cache.mkdir();
         }
-        warp = new SVSReader();
-        reader = new Memoizer(warp, 0L, new File("cache"));
+        //warp = new SVSReader();
+        reader = new SVSReader();
+        //reader = new Memoizer(warp, 0L, new File("cache"));
         reader.setGroupFiles(true);
         reader.setMetadataFiltered(true);
         reader.setOriginalMetadataPopulated(true);
@@ -199,8 +201,9 @@ public class NeoTiler {
     public void UpdateLastAccess() {
         lastaccessed = System.nanoTime();
     }
-    
-    public int MaxImage(Memoizer reader) {
+
+//    public int MaxImage(Memoizer reader) {
+    public int MaxImage(SVSReader reader) {
         int ii = 0;
         int maxseries = 0;
         int maxx = Integer.MIN_VALUE;
