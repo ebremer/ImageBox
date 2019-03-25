@@ -14,17 +14,17 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>9.4.14.v20181114</version>
+            <version>9.4.15.v20190215</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.4.10.v20180503</version>
+            <version>9.4.15.v20190215</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>9.4.11.v20180605</version>
+            <version>9.4.15.v20190215</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -35,13 +35,13 @@
         <dependency>
             <groupId>ome</groupId>
             <artifactId>formats-gpl</artifactId>
-            <version>6.0.0-rc1</version>
+            <version>6.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>ome</groupId>
             <artifactId>loci_tools</artifactId>
-            <version>6.0.0-rc1</version>
+            <version>6.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
