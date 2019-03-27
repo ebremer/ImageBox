@@ -78,7 +78,14 @@ public class iboxServlet extends HttpServlet {
                 }
                 originalImage = nt.FetchImage(i.x, i.y, i.w, i.h, i.tx, i.tx);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write( originalImage, "jpg", baos );
+                JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
+                jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                jpegParams.setCompressionQuality(1.0f);
+                ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
+                ImageOutputStream imageOut=ImageIO.createImageOutputStream(baos);
+                writer.setOutput(imageOut);
+                writer.write(null,new IIOImage(originalImage,null,null),jpegParams);                
+                //ImageIO.write( originalImage, "jpg", baos );
                 baos.flush();
                 byte[] imageInByte = baos.toByteArray();
                 baos.close();
