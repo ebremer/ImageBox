@@ -112,12 +112,12 @@ public class NeoTiler {
             pi = new int[numi];
             pratio = new float[numi];
             CoreMetadata big;
-            //System.out.println("=============================================================");
-            //for (int j=0;j<reader.getSeriesCount();j++) {
-//                big = reader.getCoreMetadataList().get(j);
-//                System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
-//            }
-  //          System.out.println("=============================================================");
+            System.out.println("=============================================================");
+            for (int j=0;j<reader.getSeriesCount();j++) {
+                big = reader.getCoreMetadataList().get(j);
+                System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
+            }
+            System.out.println("=============================================================");
             big = reader.getCoreMetadataList().get(lowerbound);
             float ratio = ((float) big.sizeX)/((float) big.sizeY);
             for (int j=lowerbound;j<(numi+lowerbound);j++) {
@@ -129,27 +129,32 @@ public class NeoTiler {
                 pi[offset] = j;
                 float mi = (((float) big.sizeX)/((float)big.sizeY));
                 float off = abs((mi-ratio)/ratio);
-               // System.out.println("OFFNESS : "+off+ " "+ratio);
+                System.out.println("OFFNESS : "+off+ " "+ratio);
                 if (off>0.01) {
                     px[offset] = 1;
-                    //System.out.println("nullifying : "+j);
+                    System.out.println("nullifying : "+j);
                 }
                 //System.out.println(offset+" >>> "+pi[offset]+" "+pr[offset]+"  "+px[offset]+","+py[offset]);
             }
             //System.out.println("=============================================================");
             SortImages();
+            //lowerbound = 0;
             upperbound = lowerbound + 1;
-            while ((upperbound<numi)&&(px[upperbound]>1024)) {
+            System.out.println(upperbound+" "+numi+" "+px[upperbound]);
+            while ((upperbound<numi)&&(px[upperbound]>1000)) {
+                System.out.println(px[upperbound]);
                 upperbound++;
             }
-            //System.out.println("IIII : "+upperbound);
+            System.out.println(numi+" IIII : "+upperbound);
             for (int j=0;j<numi;j++) {
                 pr[j] = px[0]/px[j];
-                //System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
+                System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
             }
-            numi = upperbound - lowerbound;
-            //System.out.println("lower bound : "+lowerbound);
-            //System.out.println("upper bound : "+upperbound);
+            System.out.println(numi);
+            //numi = upperbound - lowerbound;
+            System.out.println(numi);
+            System.out.println("lower bound : "+lowerbound);
+            System.out.println("upper bound : "+upperbound);
             reader.setSeries(lowerbound);
             iWidth = reader.getSizeX();
             iHeight = reader.getSizeY();
@@ -245,12 +250,12 @@ public class NeoTiler {
     }
     
     public BufferedImage FetchImage(int x, int y, int w, int h, int tx, int ty) {
-        //System.out.println("FetchImage : "+x+" "+y+" "+w+" "+h+" "+tx+" "+ty);
+        System.out.println("FetchImage : "+x+" "+y+" "+w+" "+h+" "+tx+" "+ty);
         int iratio = w/tx;
         int jj = 0;
-        //System.out.println("numi : "+numi+" "+iratio);
+        System.out.println("numi : "+numi+" "+iratio);
         while ((jj<numi-1)&&(iratio>pr[jj])) {
-            //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> "+jj+"  "+pi[jj]+" "+pr[jj]+"   "+numi+"  "+iratio);
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> "+jj+"  "+pi[jj]+" "+pr[jj]+"   "+numi+"  "+iratio);
             jj++;
         }
         //System.out.println("J : "+jj);
