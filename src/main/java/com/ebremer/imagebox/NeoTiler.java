@@ -258,6 +258,9 @@ public class NeoTiler {
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> "+jj+"  "+pi[jj]+" "+pr[jj]+"   "+numi+"  "+iratio);
             jj++;
         }
+        if (jj>0) {
+            jj--;
+        }
         //System.out.println("J : "+jj);
         //System.out.println(iratio+" picked "+jj+" "+pi[jj]+" "+pr[jj]);
         //int oratio = pr[jj];
@@ -274,7 +277,7 @@ public class NeoTiler {
         AffineTransform at = new AffineTransform();
         double scale = (((double) tx)/((double) bi.getWidth()));
         at.scale(scale,scale);
-        AffineTransformOp scaleOp =  new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        AffineTransformOp scaleOp =  new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
         target = new BufferedImage((int)(gw*scale),(int)(gh*scale),bi.getType());
         scaleOp.filter(bi, target);
         return target;
