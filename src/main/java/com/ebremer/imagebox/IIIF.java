@@ -15,13 +15,10 @@ import java.util.regex.Pattern;
  * @author Erich Bremer
  */
 public class IIIF {
-    private static final Pattern pattern1 = Pattern.compile("(https?://)([^:^/]*)(:\\d*)?/bog/(.*)?/(\\d*),(\\d*),(\\d*),(\\d*)/(\\d*),/(\\d*)/default.jpg");
-    private static final Pattern pattern2 = Pattern.compile("(https?://)([^:^/]*)(:\\d*)?/bog/(.*)?/full/(\\d*),/(\\d*)/default.jpg");
-    private static final Pattern info = Pattern.compile("(https?://)([^:^/]*)(:\\d*)?/bog/(.*)?/info.js");
+    private static final Pattern pattern1 = Pattern.compile("/bog/(.*)?/(\\d*),(\\d*),(\\d*),(\\d*)/(\\d*),/(\\d*)/default.jpg");
+    private static final Pattern pattern2 = Pattern.compile("/bog/(.*)?/full/(\\d*),/(\\d*)/default.jpg");
+    private static final Pattern info = Pattern.compile("/bog/(.*)?/info.js");
     private Matcher matcher;
-    public String protocol = null;
-    public String domain = null;
-    public String port = null;
     public URI uri = null;
     public int x;
     public int y;
@@ -38,48 +35,32 @@ public class IIIF {
         matcher = pattern1.matcher(url);
         if (matcher.find()) {
             tilerequest = true;
-            protocol = matcher.group(1);
-            domain = matcher.group(2);
-            port = matcher.group(3);
-            uri = new URI(matcher.group(4));
-            x = Integer.parseInt(matcher.group(5));
-            y = Integer.parseInt(matcher.group(6));
-            w = Integer.parseInt(matcher.group(7));
-            h = Integer.parseInt(matcher.group(8));
-            tx = Integer.parseInt(matcher.group(9));
-            rotation = Integer.parseInt(matcher.group(10));
+            uri = new URI(matcher.group(1));
+            x = Integer.parseInt(matcher.group(2));
+            y = Integer.parseInt(matcher.group(3));
+            w = Integer.parseInt(matcher.group(4));
+            h = Integer.parseInt(matcher.group(5));
+            tx = Integer.parseInt(matcher.group(6));
+            rotation = Integer.parseInt(matcher.group(7));
         } else {
             matcher = info.matcher(url);
             if (matcher.find()) {
-                //System.out.println("info request "+url);
                 inforequest = true;
-                protocol = matcher.group(1);
-                domain = matcher.group(2);
-                port = matcher.group(3);
-                uri = new URI(matcher.group(4));
+                uri = new URI(matcher.group(1));
             } else {
                 matcher = pattern2.matcher(url);
                 if (matcher.find()) {
                     tilerequest = true;
-                    protocol = matcher.group(1);
-                    domain = matcher.group(2);
-                    port = matcher.group(3);
-                    uri = new URI(matcher.group(4));
+                    uri = new URI(matcher.group(1));
                     x = 0;
                     y = 0;
                     w = Integer.MAX_VALUE;
                     h = Integer.MAX_VALUE;
-                    tx = Integer.parseInt(matcher.group(5));
-                    rotation = Integer.parseInt(matcher.group(6));
+                    tx = Integer.parseInt(matcher.group(2));
+                    rotation = Integer.parseInt(matcher.group(3));
                     fullrequest = true;
                 }
             }
         }
-        //System.out.println("IIIF : ****"+url+"*****");
-        //System.out.println("protocol: " + (protocol != null ? protocol : ""));
-        //System.out.println("domain: " + (domain != null ? domain : ""));
-        //System.out.println("port: " + (port != null ? port : ""));
-        //System.out.println("uri: " + (uri != null ? uri : ""));
-        //System.out.println(x+" "+y+" "+w+" "+h+"  "+rotation);
     }
 }

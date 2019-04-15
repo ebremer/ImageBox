@@ -14,15 +14,18 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonWriter;
 import loci.common.DebugTools;
+import loci.common.Location;
 import loci.common.services.DependencyException;
 import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
+import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
+import loci.formats.in.SVSReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -34,9 +37,10 @@ import ome.xml.model.primitives.PositiveInteger;
  * @author erich
  */
 public class NeoTiler {
-    private ImageReader warp;
+    private IFormatReader warp;
     private static final File f = new File("tmp");
-    private Memoizer reader;
+    //private Memoizer reader;
+    private ImageReader reader;
     private ServiceFactory factory;
     private OMEXMLService service;
     private MetadataStore store;
@@ -61,13 +65,22 @@ public class NeoTiler {
     public NeoTiler(String f) {
         DebugTools.enableLogging("ERROR");
         lastaccessed = System.nanoTime();
-//        System.out.println("NeoTiler : "+f.getPath()+" : "+x+","+y+","+w+","+h+","+tx+","+ty);
+        System.out.println("NeoTiler : "+f);
+        String getthis = null;
+        if (f.startsWith("http")) {
+            HTTPIRandomAccess3 bbb = new HTTPIRandomAccess3(f);
+            Location.mapFile("charm", bbb);
+            getthis = "charm";
+        } else {
+            getthis = f;
+        }
         File cache = new File("cache");
         if (!cache.exists()) {
             cache.mkdir();
         }
-        warp = new ImageReader();
-        reader = new Memoizer(warp, 0L, new File("cache"));
+        //warp = new SVSReader();
+        reader = new ImageReader();
+        //reader = new Memoizer(warp, 0L, new File("cache"));
         reader.setGroupFiles(true);
         reader.setMetadataFiltered(true);
         reader.setOriginalMetadataPopulated(true);
@@ -75,7 +88,7 @@ public class NeoTiler {
             factory = new ServiceFactory();
             service = factory.getInstance(OMEXMLService.class);
             reader.setMetadataStore(service.createOMEXMLMetadata(null, null));
-            reader.setId(f);
+            reader.setId(getthis);
             store = reader.getMetadataStore();
             MetadataTools.populatePixels(store, reader, false, false);
             reader.setSeries(0);
@@ -90,7 +103,7 @@ public class NeoTiler {
         if (!borked) {
             newRoot = (OMEXMLMetadataRoot) meta.getRoot();
             numi = reader.getSeriesCount();
-            if (f.endsWith(".vsi")) {
+            if (getthis.endsWith(".vsi")) {
                 lowerbound = MaxImage(reader);
             }
             Hashtable<String, Object> hh = reader.getSeriesMetadata();
@@ -129,32 +142,28 @@ public class NeoTiler {
                 pi[offset] = j;
                 float mi = (((float) big.sizeX)/((float)big.sizeY));
                 float off = abs((mi-ratio)/ratio);
-                System.out.println("OFFNESS : "+off+ " "+ratio);
+               // System.out.println("OFFNESS : "+off+ " "+ratio);
                 if (off>0.01) {
                     px[offset] = 1;
-                    System.out.println("nullifying : "+j);
+                    //System.out.println("nullifying : "+j);
                 }
                 //System.out.println(offset+" >>> "+pi[offset]+" "+pr[offset]+"  "+px[offset]+","+py[offset]);
             }
             //System.out.println("=============================================================");
             SortImages();
-            //lowerbound = 0;
+            lowerbound = 0;
             upperbound = lowerbound + 1;
-            System.out.println(upperbound+" "+numi+" "+px[upperbound]);
-            while ((upperbound<numi)&&(px[upperbound]>1000)) {
-                System.out.println(px[upperbound]);
+            while ((upperbound<numi)&&(px[upperbound]>1024)) {
                 upperbound++;
             }
-            System.out.println(numi+" IIII : "+upperbound);
+            //System.out.println("IIII : "+upperbound);
             for (int j=0;j<numi;j++) {
                 pr[j] = px[0]/px[j];
-                System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
+                //System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
             }
-            System.out.println(numi);
-            //numi = upperbound - lowerbound;
-            System.out.println(numi);
-            System.out.println("lower bound : "+lowerbound);
-            System.out.println("upper bound : "+upperbound);
+            numi = upperbound - lowerbound;
+            //System.out.println("lower bound : "+lowerbound);
+            //System.out.println("upper bound : "+upperbound);
             reader.setSeries(lowerbound);
             iWidth = reader.getSizeX();
             iHeight = reader.getSizeY();
@@ -193,8 +202,9 @@ public class NeoTiler {
     public void UpdateLastAccess() {
         lastaccessed = System.nanoTime();
     }
-    
-    public int MaxImage(Memoizer reader) {
+
+//    public int MaxImage(Memoizer reader) {
+    public int MaxImage(ImageReader reader) {
         int ii = 0;
         int maxseries = 0;
         int maxx = Integer.MIN_VALUE;
@@ -250,16 +260,16 @@ public class NeoTiler {
     }
     
     public BufferedImage FetchImage(int x, int y, int w, int h, int tx, int ty) {
-        System.out.println("FetchImage : "+x+" "+y+" "+w+" "+h+" "+tx+" "+ty);
+        //System.out.println("FetchImage : "+x+" "+y+" "+w+" "+h+" "+tx+" "+ty);
         int iratio = w/tx;
         int jj = 0;
-        System.out.println("numi : "+numi+" "+iratio);
+        //System.out.println("numi : "+numi+" "+iratio);
         while ((jj<numi-1)&&(iratio>pr[jj])) {
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> "+jj+"  "+pi[jj]+" "+pr[jj]+"   "+numi+"  "+iratio);
+            //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> "+jj+"  "+pi[jj]+" "+pr[jj]+"   "+numi+"  "+iratio);
             jj++;
         }
         if (jj>0) {
-            jj--;
+        //    jj--;
         }
         //System.out.println("J : "+jj);
         //System.out.println(iratio+" picked "+jj+" "+pi[jj]+" "+pr[jj]);
@@ -277,7 +287,7 @@ public class NeoTiler {
         AffineTransform at = new AffineTransform();
         double scale = (((double) tx)/((double) bi.getWidth()));
         at.scale(scale,scale);
-        AffineTransformOp scaleOp =  new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        AffineTransformOp scaleOp =  new AffineTransformOp(at, AffineTransformOp.TYPE_BICUBIC);
         target = new BufferedImage((int)(gw*scale),(int)(gh*scale),bi.getType());
         scaleOp.filter(bi, target);
         return target;

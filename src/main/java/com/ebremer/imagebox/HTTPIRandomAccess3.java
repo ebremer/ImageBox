@@ -524,7 +524,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
                 Logger.getLogger(HTTPIRandomAccess3.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-     }
+     } 
 
     @Override
     public boolean exists() throws IOException {
@@ -534,5 +534,5 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     @Override
     public long skipBytes(long l) throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }   
+    }
 }

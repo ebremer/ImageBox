@@ -26,16 +26,6 @@ import javax.servlet.http.HttpSession;
  * @author erich
  */
 public class iboxServlet extends HttpServlet {
-    //final ConcurrentHashMap uris = new ConcurrentHashMap();
-    //final ConcurrentHashMap transfers = new ConcurrentHashMap();
-    //final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
-
-    @Override
-    protected void doPost( HttpServletRequest request,HttpServletResponse response ) throws ServletException,IOException {
-         //       } else if (req.startsWith("/upload")) {
-            System.out.println("UPLOADER...");
-            System.out.println(request.getParameter("UserFile"));
-    }
     
     @Override
     protected void doGet( HttpServletRequest request,HttpServletResponse response ) throws ServletException,IOException {
@@ -47,24 +37,29 @@ public class iboxServlet extends HttpServlet {
             // give them something here, at somepoint, for favicon.ico thing
         } else if (req.startsWith("/bog/")) {
             //System.out.println("REQ : "+req);
-            req = "http://localhost:8888"+req;
             IIIF i = null;
             try {
                 i = new IIIF(req);
             } catch (URISyntaxException ex) {
                 Logger.getLogger(iboxServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            File image = FileSystems.getDefault().provider().getPath(i.uri).toAbsolutePath().toFile();
-            NeoTiler nt;
+            NeoTiler nt = null;
             ImageReaderPool pool;
+            String target = null;
             if (session.isNew()) {
-                //System.out.println("New session.  Creating pool...");
                 pool = new ImageReaderPool();
                 session.setAttribute("pool", pool);
             } else {
                 pool = (ImageReaderPool) session.getAttribute("pool");
             }
-            nt = pool.GetReader(image.getPath());
+            if (i.uri.getScheme().startsWith("http")) {
+                target = i.uri.toString();
+                nt = pool.GetReader(target);                
+            } else if (i.uri.getScheme().startsWith("file"))  {
+                File image = FileSystems.getDefault().provider().getPath(i.uri).toAbsolutePath().toFile();
+                target = image.getPath();
+                nt = pool.GetReader(target);
+            }
             if (nt.isBorked()) {
                 response.setContentType("application/json");
                 response.setStatus(500);
@@ -110,27 +105,9 @@ public class iboxServlet extends HttpServlet {
             } else {
                 System.out.println("unknown IIIF request");
             }
-            pool.ReturnReader(image.getPath(), nt);
+            pool.ReturnReader(target, nt);
         } else {
             System.out.println("NO IDEA WHAT YOU WANT FROM ME "+req);
         }
     }
 }
-
-
-/*
-            synchronized(this) {
-                File lastimage = (File) this.getServletConfig().getServletContext().getAttribute("image");
-                if (lastimage==null) {
-                    nt = new NeoTiler(image,i.x,i.y,i.w,i.h,i.tx,i.tx);
-                    this.getServletConfig().getServletContext().setAttribute("neo", nt);
-                    this.getServletConfig().getServletContext().setAttribute("image", image);
-                } else if (lastimage.equals(image)) {
-                    nt = (NeoTiler) this.getServletConfig().getServletContext().getAttribute("neo");
-                } else {
-                    nt = new NeoTiler(image,i.x,i.y,i.w,i.h,i.tx,i.tx);
-                    this.getServletConfig().getServletContext().setAttribute("neo", nt);
-                    this.getServletConfig().getServletContext().setAttribute("image", image);
-                }
-            } 
-*/

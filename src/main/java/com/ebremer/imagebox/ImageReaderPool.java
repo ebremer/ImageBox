@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.ebremer.imagebox;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
@@ -18,7 +12,7 @@ import java.util.TimerTask;
 public class ImageReaderPool {
     private final HashMap pool = new HashMap();
     private final Timer timer = new Timer();
-    private File f = new File("cache");
+    //private File f = new File("cache");
     
     ImageReaderPool() {
        
@@ -39,7 +33,6 @@ public class ImageReaderPool {
                 pool.remove(id);
             }
         } else {
-            //System.out.println("creating new neotiler : "+id);
             reader = new NeoTiler(id);
         }
         return reader;
