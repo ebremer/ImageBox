@@ -6,12 +6,14 @@
 package com.ebremer.imagebox;
 
 import java.awt.image.BufferedImage;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -113,7 +115,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     private void FillBuffer(long start, long len) {
         calls++;
-        //System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
+        System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
         if (len>this.length) {
             System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
             System.out.println("clipping request..."+len+" to "+this.length);
@@ -160,6 +162,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public long getFilePointer() throws IOException {
+        System.out.println("getFilePointer("+this.pos+")");
         return this.pos;
     }
 
@@ -170,7 +173,6 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public ByteOrder getOrder() {
-        //System.out.println("getOrder");
         return bah.getOrder();
     }
 
@@ -181,6 +183,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public int read(byte[] b) throws IOException {
+        System.out.println("read(byte[] b) "+b.length);
         numreadByteRange++;
         avgrange = avgrange + b.length;
         if (b.length>maxrange) {
@@ -196,13 +199,43 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
         for (int i=0;i<b.length;i++) {
             b[i] = readByte();
         }
-        //System.out.println(Integer.toHexString(b));
+        //System.out.println(b.length);
+        //for (int y=0;y<b.length;y++){
+        //    System.out.print(b[y]+" ");
+        //}
+        //System.out.println();
         return b.length;
+    }
+    
+    public int read() throws IOException {
+        return readByte();
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("read("+off+"  "+len);
+        //Objects.checkFromIndexSize(off, len, b.length);
+        if (len == 0) {
+            return 0;
+        }
+        int c = read();
+        if (c == -1) {
+            return -1;
+        }
+        b[off] = (byte)c;
+        int i = 1;
+        try {
+            for (; i < len ; i++) {
+                c = read();
+                if (c == -1) {
+                    break;
+                }
+                b[off + i] = (byte)c;
+            }
+        } catch (IOException ee) {
+        }
+        return i;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -217,7 +250,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public void seek(long pos) throws IOException {
-        //System.out.println("seek("+Long.toHexString(pos)+")");
+        System.out.println("seek("+Long.toHexString(pos)+")");
         if ((pos<bufferstart) || (pos>bufferstart+bah.length())) {
             if (bah!=null) {
                 //System.out.println("saving "+Long.toHexString(bufferstart)+" into cache...");
@@ -262,20 +295,29 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     }
 
     @Override
-    public void readFully(byte[] b) {
-        System.out.println("readFully");
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void readFully(byte[] b) throws IOException {
+        System.out.println("readFully : "+b.length);
+        readFully(b, 0, b.length);
     }
 
     @Override
-    public void readFully(byte[] b, int off, int len) {
+    public void readFully(byte[] b, int off, int len) throws IOException {
         System.out.println("readFully "+off+" "+len);
+        if (len < 0)
+            throw new IndexOutOfBoundsException();
+        int n = 0;
+        while (n < len) {
+            int count = read(b, off + n, len - n);
+            if (count < 0)
+                throw new EOFException();
+            n += count;
+        }
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int skipBytes(int n) throws IOException {
-        //System.out.println("skipBytes("+n+")");
+        System.out.println("skipBytes("+n+")");
         if (n>(bah.length()-bah.getFilePointer())) {
             seek(pos+n);
         } else {
@@ -293,15 +335,15 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     @Override
     public byte readByte() throws IOException {
         numreadByte++;
-        //System.out.print("readByte() = ");
+        System.out.print("readByte() = ");
         byte b = 0;
-        if (bah.getFilePointer()==bah.length()) {
-            //System.out.println("untested 2 - "+pos+" "+chunksize);
+        System.out.println("readByte() - "+bah.getFilePointer()+" "+bah.length());
+        if (bah.getFilePointer()==bah.length()) {    
             FillBuffer(pos,chunksize);
         }
         b = bah.readByte();
         pos++;
-        //System.out.println(Integer.toHexString(b));
+        System.out.println(Integer.toHexString(b));
         return b;
     }
 
@@ -313,14 +355,15 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     @Override
     public short readShort() throws IOException {
         numreadShort++;
-        //System.out.print("readShort() = ");
+        System.out.print(pos+"  readShort() = ");
+        System.out.println("readShort() - "+bah.getFilePointer()+" "+bah.length());
         if ((bah.length()-bah.getFilePointer())==0) {
-            System.out.println("untested");
+            
             FillBuffer(pos,chunksize);
         }
         short b = bah.readShort();
         pos=pos+2;
-        //System.out.println(Integer.toHexString(b));
+        System.out.println(Integer.toHexString(b));
         return b;
     }
 
@@ -340,26 +383,39 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     @Override
     public int readInt() throws IOException {
         numreadInt++;
-        //System.out.print("readInt() = ");
+        System.out.print("readInt() = ");
         int b = 0;
         if ((bah.length()-bah.getFilePointer())<4) {
-            //System.out.println("untested 3");
+            System.out.println("readInt() - "+bah.getFilePointer()+" "+bah.length());
             FillBuffer(pos,chunksize);
         }
         b = bah.readInt();
         pos=pos+4;
-        //System.out.println(Integer.toHexString(b));
+        System.out.println(Integer.toHexString(b));
         return b;
     }
 
     @Override
     public long readLong() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("readLong()");
+        byte readBuffer[] = new byte[8];
+        readFully(readBuffer, 0, 8);
+        return (((long)readBuffer[0] << 56) +
+                ((long)(readBuffer[1] & 255) << 48) +
+                ((long)(readBuffer[2] & 255) << 40) +
+                ((long)(readBuffer[3] & 255) << 32) +
+                ((long)(readBuffer[4] & 255) << 24) +
+                ((readBuffer[5] & 255) << 16) +
+                ((readBuffer[6] & 255) <<  8) +
+        ((readBuffer[7] & 255) << 0));
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public float readFloat() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("readFloat()");
+        return Float.intBitsToFloat(readInt());
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override

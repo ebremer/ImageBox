@@ -69,6 +69,13 @@ public class NeoTiler {
         String getthis = null;
         if (f.startsWith("http")) {
             HTTPIRandomAccess3 bbb = new HTTPIRandomAccess3(f);
+            File fff = new File("C:\\svs\\TCGA-02-0001-01C-01-BS1.0cc8ca55-d024-440c-a4f0-01cf5b3af861.svs");
+            //SpyNIOFileHandle bbb = null;
+            //try {
+            //    bbb = new SpyNIOFileHandle(fff,"r",0);
+            //} catch (IOException ex) {
+            //   Logger.getLogger(NeoTiler.class.getName()).log(Level.SEVERE, null, ex);
+            //}
             Location.mapFile("charm", bbb);
             getthis = "charm";
         } else {
@@ -88,6 +95,7 @@ public class NeoTiler {
             factory = new ServiceFactory();
             service = factory.getInstance(OMEXMLService.class);
             reader.setMetadataStore(service.createOMEXMLMetadata(null, null));
+            System.out.println("here");
             reader.setId(getthis);
             store = reader.getMetadataStore();
             MetadataTools.populatePixels(store, reader, false, false);
@@ -95,8 +103,10 @@ public class NeoTiler {
             String xml = service.getOMEXML(service.asRetrieve(store));
             meta = service.createOMEXMLMetadata(xml);
         } catch (DependencyException | ServiceException | IOException ex) {
+            System.out.println("uuuurrrggg");
             Logger.getLogger(NeoTiler.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FormatException ex) {
+            System.out.println("FormatException : "+ex.toString());
             borked = true;
             status = ex.getMessage();
         }
