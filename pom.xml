@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.ebremer</groupId>
     <artifactId>ImageBox</artifactId>
-    <version>2.0.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -14,17 +14,17 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>9.4.15.v20190215</version>
+            <version>9.4.14.v20181114</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.4.15.v20190215</version>
+            <version>9.4.14.v20181114</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>9.4.15.v20190215</version>
+            <version>9.4.14.v20181114</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -35,13 +35,13 @@
         <dependency>
             <groupId>ome</groupId>
             <artifactId>formats-gpl</artifactId>
-            <version>6.0.1</version>
+            <version>6.1.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>ome</groupId>
             <artifactId>loci_tools</artifactId>
-            <version>6.0.1</version>
+            <version>6.1.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

@@ -32,8 +32,10 @@ public class IIIF {
     public boolean fullrequest = false;
 
     IIIF(String url) throws URISyntaxException {
+        System.out.println("IIIF("+url+")");
         matcher = pattern1.matcher(url);
         if (matcher.find()) {
+            System.out.println("matched");
             tilerequest = true;
             uri = new URI(matcher.group(1));
             x = Integer.parseInt(matcher.group(2));
@@ -45,8 +47,11 @@ public class IIIF {
         } else {
             matcher = info.matcher(url);
             if (matcher.find()) {
+                System.out.println("matched here");
                 inforequest = true;
+                System.out.println("ya ya "+matcher.group(1));
                 uri = new URI(matcher.group(1));
+                System.out.println("ya ya after : "+uri);
             } else {
                 matcher = pattern2.matcher(url);
                 if (matcher.find()) {

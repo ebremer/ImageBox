@@ -36,7 +36,7 @@ public class iboxServlet extends HttpServlet {
         } else if (req.compareTo("/favicon.ico")==0) {
             // give them something here, at somepoint, for favicon.ico thing
         } else if (req.startsWith("/bog/")) {
-            //System.out.println("REQ : "+req);
+            System.out.println("REQ : "+req);
             IIIF i = null;
             try {
                 i = new IIIF(req);
@@ -52,6 +52,8 @@ public class iboxServlet extends HttpServlet {
             } else {
                 pool = (ImageReaderPool) session.getAttribute("pool");
             }
+            System.out.println("here "+i.uri.getScheme());
+            System.out.println("here "+i.inforequest);
             if (i.uri.getScheme().startsWith("http")) {
                 target = i.uri.toString();
                 nt = pool.GetReader(target);                

@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  */
     public class W3Cmf {
     final Server server = new Server();
-    int port = 80;
+    int port = 8888;
     String webfiles = "files/webfiles";
     
     public W3Cmf() throws Exception {
