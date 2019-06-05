@@ -52,8 +52,6 @@ public class iboxServlet extends HttpServlet {
             } else {
                 pool = (ImageReaderPool) session.getAttribute("pool");
             }
-            System.out.println("here "+i.uri.getScheme());
-            System.out.println("here "+i.inforequest);
             if (i.uri.getScheme().startsWith("http")) {
                 target = i.uri.toString();
                 nt = pool.GetReader(target);                
