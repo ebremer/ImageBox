@@ -10,9 +10,6 @@ import static java.lang.Math.abs;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonWriter;
 import loci.common.DebugTools;
 import loci.common.Location;
 import loci.common.services.DependencyException;
@@ -31,6 +28,18 @@ import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.primitives.PositiveInteger;
+import org.apache.jena.query.DatasetFactory;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.riot.JsonLDWriteContext;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.riot.RDFWriter;
+import org.apache.jena.riot.writer.JsonLDWriter;
+import org.apache.jena.sparql.util.Context;
 
 /**
  *
@@ -61,8 +70,10 @@ public class NeoTiler {
     private boolean borked = false;
     private String status = "";
     private long lastaccessed;
+    private String id;
     
     public NeoTiler(String f) {
+        this.id = f;
         DebugTools.enableLogging("ERROR");
         lastaccessed = System.nanoTime();
         System.out.println("NeoTiler : "+f);
@@ -239,23 +250,30 @@ public class NeoTiler {
     }
     
     public String GetImageInfo() {
-        JsonObject model;
+        Model m = ModelFactory.createDefaultModel();
+       // m.setNsPrefix("exif", "http://www.w3.org/2003/12/exif/ns#");
         if (borked) {
-            model = Json.createObjectBuilder()
-                .add("status", status).build();
+            m.addLiteral(m.createResource("http://www.ebremer.com/a"), m.createProperty("http://www.w3.org/2003/12/exif/ns#status"), status);
         } else {
-            model = Json.createObjectBuilder()
-                .add("height", iHeight)
-                .add("width", iWidth)
-                .add("mpp-x", mppx)
-                .add("mpp-y", mppy)
-                .build();
+            m.addLiteral(m.createResource("http://www.ebremer.com/a"), m.createProperty("http://www.w3.org/2003/12/exif/ns#height"), iHeight);
+            m.addLiteral(m.createResource("http://www.ebremer.com/a"), m.createProperty("http://www.w3.org/2003/12/exif/ns#width"), iWidth);
+            m.addLiteral(m.createResource("http://www.ebremer.com/a"), m.createProperty("http://www.w3.org/2003/12/exif/ns#xResolution"), Math.round(10000/mppx));
+            m.addLiteral(m.createResource("http://www.ebremer.com/a"), m.createProperty("http://www.w3.org/2003/12/exif/ns#yResolution"), Math.round(10000/mppy));
+            m.addLiteral(m.createResource("http://www.ebremer.com/a"), m.createProperty("http://www.w3.org/2003/12/exif/ns#resolutionUnit"), 3);   
         }
-        StringWriter stWriter = new StringWriter();
-        try (JsonWriter jsonWriter = Json.createWriter(stWriter)) {
-            jsonWriter.writeObject(model);
-        }
-        return stWriter.toString();
+        StringWriter out = new StringWriter();
+        JsonLDWriteContext ctx = new JsonLDWriteContext();
+        ctx.setJsonLDContext(null);
+        //ctx.setJsonLDContext("\"http://iiif.io/api/image/2/context.json\"");
+        ctx.setJsonLDContextSubstitution("\"http://iiif.io/api/image/2/context.json\"");
+        RDFWriter w =
+            RDFWriter.create()
+            .format(RDFFormat.JSONLD_COMPACT_PRETTY)
+            .source(DatasetFactory.wrap(m).asDatasetGraph())
+            .context(ctx)
+            .build();
+        w.output(out);
+        return out.toString();
     }
     
     public BufferedImage FetchImage(int x, int y, int w, int h, int tx, int ty) {
