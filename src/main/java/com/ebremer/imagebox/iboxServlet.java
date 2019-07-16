@@ -36,7 +36,7 @@ public class iboxServlet extends HttpServlet {
         } else if (req.compareTo("/favicon.ico")==0) {
             // give them something here, at somepoint, for favicon.ico thing
         } else if (req.startsWith("/bog/")) {
-            System.out.println("REQ : "+req);
+            System.out.println("XREQ : "+req);
             IIIF i = null;
             try {
                 i = new IIIF(req);

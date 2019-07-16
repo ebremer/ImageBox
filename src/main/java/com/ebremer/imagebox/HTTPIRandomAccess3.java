@@ -73,7 +73,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     private String uuid = UUID.randomUUID().toString();
     
     HTTPIRandomAccess3(String url) {
-        System.out.println("HTTPIRandomAccess3 initializing..."+uuid+" "+url);
+        //System.out.println("HTTPIRandomAccess3 initializing..."+uuid+" "+url);
         tm = new TreeMap<>();
         this.url = url;
         if (httpClient == null) {
@@ -95,10 +95,10 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
             } catch (InterruptedException | TimeoutException | ExecutionException ex) {
                 Logger.getLogger(HTTPIRandomAccess3.class.getName()).log(Level.SEVERE, null, ex);
             }
-            System.out.println("xxxResponse : "+response.getStatus());
+            //System.out.println("xxxResponse : "+response.getStatus());
             if (response.getStatus() == 200) {
                 this.length = response.getHeaders().getField(HttpHeader.CONTENT_LENGTH).getLongValue();
-                System.out.println("Content Length : "+length);
+                //System.out.println("Content Length : "+length);
                 try {
                     seek(0L);
                 } catch (IOException ex) {
@@ -108,7 +108,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
                 System.out.println("zamError detected on accessing!!! : ("+response.getStatus()+") : "+url);
             }
         }
-        System.out.println("init complete : "+this.length);
+        //System.out.println("init complete : "+this.length);
     }
 
     private void FillBuffer(long start, long len) {

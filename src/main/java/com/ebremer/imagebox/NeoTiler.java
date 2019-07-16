@@ -76,7 +76,7 @@ public class NeoTiler {
         this.id = f;
         DebugTools.enableLogging("ERROR");
         lastaccessed = System.nanoTime();
-        System.out.println("NeoTiler : "+f);
+        //System.out.println("NeoTiler : "+f);
         String getthis = null;
         if (f.startsWith("http")) {
             HTTPIRandomAccess3 bbb = new HTTPIRandomAccess3(f);

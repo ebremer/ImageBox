@@ -49,17 +49,17 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>9.4.12.v20180830</version>
+            <version>9.4.19.v20190610</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.4.12.v20180830</version>
+            <version>9.4.19.v20190610</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>9.4.12.v20180830</version>
+            <version>9.4.19.v20190610</version>
             <type>jar</type>
         </dependency>
     </dependencies>
