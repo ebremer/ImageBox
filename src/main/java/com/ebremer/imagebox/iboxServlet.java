@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOImage;
@@ -52,13 +54,21 @@ public class iboxServlet extends HttpServlet {
             } else {
                 pool = (ImageReaderPool) session.getAttribute("pool");
             }
+            System.out.println("WOT?! : "+i.uri.getScheme());
+            System.out.println("Working Directory = " + System.getProperty("user.dir"));
+            Path pp = Paths.get(System.getProperty("user.dir")+"/"+Settings.webfiles);
+            System.out.println(pp.toFile().toURI().toString());
+            System.out.println("PATH : "+pp.toFile().toString());
             if (i.uri.getScheme().startsWith("http")) {
                 target = i.uri.toString();
                 nt = pool.GetReader(target);                
-            } else if (i.uri.getScheme().startsWith("file"))  {
+            } else if (i.uri.getScheme().startsWith("file")) {
+                System.out.println("you FOOL! the other white meat : "+i.uri.getScheme());
                 File image = FileSystems.getDefault().provider().getPath(i.uri).toAbsolutePath().toFile();
                 target = image.getPath();
                 nt = pool.GetReader(target);
+            } else {
+                System.out.println("the other white meat : "+i.uri.getScheme());
             }
             if (nt.isBorked()) {
                 response.setContentType("application/json");

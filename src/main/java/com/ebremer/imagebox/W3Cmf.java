@@ -20,8 +20,7 @@ import org.slf4j.LoggerFactory;
  */
     public class W3Cmf {
     final Server server = new Server();
-    int port = 8888;
-    String webfiles = "files/webfiles";
+    String webfiles = Settings.webfiles;
     
     public W3Cmf() throws Exception {
         startup();
@@ -49,7 +48,7 @@ import org.slf4j.LoggerFactory;
             System.out.println("nothing found");
         } */     
         ServerConnector connector = new ServerConnector(server);
-        connector.setPort(port);
+        connector.setPort(Settings.port);
         server.addConnector(connector);    
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
