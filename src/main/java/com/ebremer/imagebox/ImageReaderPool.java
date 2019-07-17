@@ -21,6 +21,7 @@ public class ImageReaderPool {
     private File f = new File("cache");
     
     ImageReaderPool() {
+        //System.out.println("creating new pool");
        
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -31,8 +32,10 @@ public class ImageReaderPool {
     }
     
     private synchronized NeoTiler GetReaderFromPool(String id) {
+        //System.out.println("GetReaderFromPool "+id);
         NeoTiler reader;
         if (pool.containsKey(id)) {
+            //System.out.println("Found Reader in pool! : "+id);
             ArrayList list = (ArrayList) pool.get(id);                    
             reader = (NeoTiler) list.remove(0);
             if (list.isEmpty())  {
@@ -46,6 +49,7 @@ public class ImageReaderPool {
     }
     
     public NeoTiler GetReader(String id) {
+        //System.out.println("GetReader "+id);
         NeoTiler reader = GetReaderFromPool(id);
         if (reader==null) {
             reader = new NeoTiler(id);
@@ -54,15 +58,17 @@ public class ImageReaderPool {
     }
     
     public synchronized void ReturnReader(String id, NeoTiler reader) {
+        //System.out.println("ReturnReader "+id);
         if (pool.containsKey(id)) {
             ArrayList list = (ArrayList) pool.get(id);            
             list.add(reader);
-            //System.out.println("pool size : "+list.size());
+            //System.out.println("pool size [e]: "+list.size());
         } else {
+            //System.out.println("creating new list...");
             ArrayList list = new ArrayList();
             list.add(reader);
             pool.put(id, list);
-            //System.out.println("pool size : "+list.size());
+            //System.out.println("pool size [ne]: "+list.size());
         }        
     }
 }

@@ -1,6 +1,8 @@
 package com.ebremer.imagebox;
 
 import ch.qos.logback.classic.Level;
+import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;

@@ -28,6 +28,8 @@ import javax.servlet.http.HttpSession;
  * @author erich
  */
 public class iboxServlet extends HttpServlet {
+    static final ImageReaderPool pool = new ImageReaderPool();
+    Path fpath = Paths.get(System.getProperty("user.dir")+"/"+Settings.webfiles);
     
     @Override
     protected void doGet( HttpServletRequest request,HttpServletResponse response ) throws ServletException,IOException {
@@ -38,7 +40,7 @@ public class iboxServlet extends HttpServlet {
         } else if (req.compareTo("/favicon.ico")==0) {
             // give them something here, at somepoint, for favicon.ico thing
         } else if (req.startsWith("/bog/")) {
-            System.out.println("XREQ : "+req);
+            //System.out.println("XREQ : "+req);
             IIIF i = null;
             try {
                 i = new IIIF(req);
@@ -46,29 +48,28 @@ public class iboxServlet extends HttpServlet {
                 Logger.getLogger(iboxServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
             NeoTiler nt = null;
-            ImageReaderPool pool;
+            //ImageReaderPool pool;
             String target = null;
+            /*
             if (session.isNew()) {
                 pool = new ImageReaderPool();
                 session.setAttribute("pool", pool);
             } else {
                 pool = (ImageReaderPool) session.getAttribute("pool");
-            }
-            System.out.println("WOT?! : "+i.uri.getScheme());
-            System.out.println("Working Directory = " + System.getProperty("user.dir"));
-            Path pp = Paths.get(System.getProperty("user.dir")+"/"+Settings.webfiles);
-            System.out.println(pp.toFile().toURI().toString());
-            System.out.println("PATH : "+pp.toFile().toString());
-            if (i.uri.getScheme().startsWith("http")) {
+            } */
+            if (i.uri.getScheme()==null) {
+                File image = Paths.get(fpath+"/"+i.uri.getPath()).toFile();
+                target = image.getPath();
+                nt = pool.GetReader(target);                
+            } else if (i.uri.getScheme().startsWith("http")) {
                 target = i.uri.toString();
                 nt = pool.GetReader(target);                
             } else if (i.uri.getScheme().startsWith("file")) {
-                System.out.println("you FOOL! the other white meat : "+i.uri.getScheme());
                 File image = FileSystems.getDefault().provider().getPath(i.uri).toAbsolutePath().toFile();
                 target = image.getPath();
                 nt = pool.GetReader(target);
             } else {
-                System.out.println("the other white meat : "+i.uri.getScheme());
+                System.out.println("I'm so confused as what I am looking at....");
             }
             if (nt.isBorked()) {
                 response.setContentType("application/json");

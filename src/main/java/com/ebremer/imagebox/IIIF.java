@@ -48,11 +48,11 @@ public class IIIF {
         } else {
             matcher = info.matcher(url);
             if (matcher.find()) {
-                System.out.println("matched here");
+                //System.out.println("matched here");
                 inforequest = true;
-                System.out.println("ya ya "+matcher.group(1));
+                //System.out.println("ya ya "+matcher.group(1));
                 uri = new URI(matcher.group(1));
-                System.out.println("ya ya after : "+uri);
+                //System.out.println("ya ya after : "+uri);
             } else {
                 matcher = pattern2.matcher(url);
                 if (matcher.find()) {
