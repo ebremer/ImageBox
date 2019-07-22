@@ -18,7 +18,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">20</stringProp>
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
         <stringProp name="ThreadGroup.ramp_time">0</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -92,7 +92,7 @@
           <hashTree/>
         </hashTree>
         <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
-          <intProp name="groupSize">20</intProp>
+          <intProp name="groupSize">10</intProp>
           <longProp name="timeoutInMs">0</longProp>
         </SyncTimer>
         <hashTree/>
@@ -163,7 +163,7 @@
           <hashTree/>
         </hashTree>
         <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
-          <intProp name="groupSize">20</intProp>
+          <intProp name="groupSize">10</intProp>
           <longProp name="timeoutInMs">0</longProp>
         </SyncTimer>
         <hashTree/>
@@ -234,7 +234,7 @@
           <hashTree/>
         </hashTree>
         <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
-          <intProp name="groupSize">20</intProp>
+          <intProp name="groupSize">10</intProp>
           <longProp name="timeoutInMs">0</longProp>
         </SyncTimer>
         <hashTree/>
@@ -243,10 +243,10 @@
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">500</stringProp>
+          <stringProp name="LoopController.loops">250</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">20</stringProp>
-        <stringProp name="ThreadGroup.ramp_time"></stringProp>
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">0</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
@@ -427,7 +427,7 @@ vars.put(&quot;height&quot;,sheight);
             <hashTree/>
           </hashTree>
           <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
-            <intProp name="groupSize">20</intProp>
+            <intProp name="groupSize">10</intProp>
             <longProp name="timeoutInMs">0</longProp>
           </SyncTimer>
           <hashTree/>
@@ -604,7 +604,7 @@ vars.put(&quot;height&quot;,sheight);
             <hashTree/>
           </hashTree>
           <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
-            <intProp name="groupSize">20</intProp>
+            <intProp name="groupSize">10</intProp>
             <longProp name="timeoutInMs">0</longProp>
           </SyncTimer>
           <hashTree/>
@@ -782,7 +782,7 @@ vars.put(&quot;height&quot;,sheight);
             <hashTree/>
           </hashTree>
           <SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronizing Timer" enabled="true">
-            <intProp name="groupSize">20</intProp>
+            <intProp name="groupSize">10</intProp>
             <longProp name="timeoutInMs">0</longProp>
           </SyncTimer>
           <hashTree/>
@@ -853,6 +853,7 @@ vars.put(&quot;height&quot;,sheight);
             <stringProp name="filename">D:\NewProjects\ImageBox\rtg.csv</stringProp>
             <stringProp name="RespTimeGraph.interval">500</stringProp>
             <intProp name="RespTimeGraph.linestrockwidth">2</intProp>
+            <intProp name="RespTimeGraph.legendsize">8</intProp>
           </ResultCollector>
           <hashTree/>
           <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
