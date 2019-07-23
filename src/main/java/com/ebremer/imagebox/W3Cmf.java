@@ -59,12 +59,12 @@ import org.slf4j.LoggerFactory;
         SessionCache cache = new DefaultSessionCache(sessions);
         cache.setSessionDataStore(new NullSessionDataStore());
         sessions.setSessionCache(cache);
-        context.addServlet(iboxServlet.class, "/");
+        context.addServlet(iboxServlet.class, "/bog/*");
         ServletHolder holderHome = new ServletHolder("static-home", DefaultServlet.class);
         holderHome.setInitParameter("resourceBase",webfiles);
         holderHome.setInitParameter("dirAllowed","true");
         holderHome.setInitParameter("pathInfoOnly","true");
-        context.addServlet(holderHome,"/files/*");
+        context.addServlet(holderHome,"/*");
         server.start();
         server.join();  
     }

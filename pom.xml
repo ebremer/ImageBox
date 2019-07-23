@@ -36,16 +36,15 @@
         <dependency>
             <groupId>ome</groupId>
             <artifactId>formats-gpl</artifactId>
-            <version>6.1.1</version>
+            <version>6.2.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>ome</groupId>
             <artifactId>loci_tools</artifactId>
-            <version>6.1.1</version>
+            <version>6.2.0</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
