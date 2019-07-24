@@ -55,7 +55,6 @@ public class NewClass {
         }
         System.out.println("hasFlattenedResolutions : "+reader.hasFlattenedResolutions());
         System.out.println("num resolutions : "+reader.getResolutionCount());
-        reader.setFlattenedResolutions(true);
         
         System.out.println("series count : "+reader.getSeriesCount());
 

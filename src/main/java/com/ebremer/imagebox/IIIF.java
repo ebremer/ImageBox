@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
  * @author Erich Bremer
  */
 public class IIIF {
-    private static final Pattern pattern1 = Pattern.compile("/bog/(.*)?/(\\d*),(\\d*),(\\d*),(\\d*)/(\\d*),/(\\d*)/default.jpg");
-    private static final Pattern pattern2 = Pattern.compile("/bog/(.*)?/full/(\\d*),/(\\d*)/default.jpg");
-    private static final Pattern info = Pattern.compile("/bog/(.*)?/info.js");
+    private static final Pattern pattern1 = Pattern.compile("/iiif/(.*)?/(\\d*),(\\d*),(\\d*),(\\d*)/(\\d*),/(\\d*)/default.jpg");
+    private static final Pattern pattern2 = Pattern.compile("/iiif/(.*)?/full/(\\d*),/(\\d*)/default.jpg");
+    private static final Pattern info = Pattern.compile("/iiif/(.*)?/info.js");
     private Matcher matcher;
     public URI uri = null;
     public int x;

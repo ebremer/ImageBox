@@ -1,9 +1,6 @@
 package com.ebremer.imagebox;
 
 import ch.qos.logback.classic.Level;
-import java.io.File;
-import java.net.URI;
-import java.net.URL;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.session.DefaultSessionCache;
@@ -42,13 +39,6 @@ import org.slf4j.LoggerFactory;
     }
     
     private void startup() throws Exception {
-        /*URL url = this.getClass().getClassLoader().getResource("webfiles");
-        String webDir = null;
-        if (url != null) {
-            webDir = url.toExternalForm();
-        } else {
-            System.out.println("nothing found");
-        } */     
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(Settings.port);
         server.addConnector(connector);    
@@ -59,7 +49,7 @@ import org.slf4j.LoggerFactory;
         SessionCache cache = new DefaultSessionCache(sessions);
         cache.setSessionDataStore(new NullSessionDataStore());
         sessions.setSessionCache(cache);
-        context.addServlet(iboxServlet.class, "/bog/*");
+        context.addServlet(iboxServlet.class, "/iiif/*");
         ServletHolder holderHome = new ServletHolder("static-home", DefaultServlet.class);
         holderHome.setInitParameter("resourceBase",webfiles);
         holderHome.setInitParameter("dirAllowed","true");

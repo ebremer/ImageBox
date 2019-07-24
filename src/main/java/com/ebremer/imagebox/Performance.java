@@ -37,8 +37,8 @@ public class Performance {
 
     public void Turbo() {
         long start = System.nanoTime();
-        ImageReader warp = new ImageReader();
-        Memoizer m = new Memoizer(warp, 0L, f);
+        ImageReader m = new ImageReader();
+        //Memoizer m = new Memoizer(warp, 0L, f);
         try {
             m.setId("D:\\WSI\\20180504\\001738-000002_02_20180504.vsi");
         } catch (FormatException | IOException ex) {
@@ -61,7 +61,7 @@ public class Performance {
         root.setLevel(ch.qos.logback.classic.Level.OFF);
         new Performance().Turbo();
         long total = 0;
-        for (int i=0; i<10000; i++) {
+        for (int i=0; i<100; i++) {
             Performance p = new Performance();
             total = total + p.getDelta();
         }

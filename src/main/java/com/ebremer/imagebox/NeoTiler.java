@@ -136,12 +136,12 @@ public class NeoTiler {
             pi = new int[numi];
             pratio = new float[numi];
             CoreMetadata big;
-            //System.out.println("=============================================================");
-            //for (int j=0;j<reader.getSeriesCount();j++) {
-//                big = reader.getCoreMetadataList().get(j);
-//                System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
-//            }
-  //          System.out.println("=============================================================");
+            System.out.println("=============================================================");
+            for (int j=0;j<reader.getSeriesCount();j++) {
+                big = reader.getCoreMetadataList().get(j);
+                System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
+            }
+            System.out.println("=============================================================");
             big = reader.getCoreMetadataList().get(lowerbound);
             float ratio = ((float) big.sizeX)/((float) big.sizeY);
             for (int j=lowerbound;j<(numi+lowerbound);j++) {
@@ -153,20 +153,15 @@ public class NeoTiler {
                 pi[offset] = j;
                 float mi = (((float) big.sizeX)/((float)big.sizeY));
                 float off = abs((mi-ratio)/ratio);
-               // System.out.println("OFFNESS : "+off+ " "+ratio);
                 if (off>0.01) {
                     px[offset] = 1;
-                    //System.out.println("nullifying : "+j);
                 }
-                //System.out.println(offset+" >>> "+pi[offset]+" "+pr[offset]+"  "+px[offset]+","+py[offset]);
             }
-            //System.out.println("=============================================================");
             SortImages();
             upperbound = lowerbound + 1;
             while ((upperbound<numi)&&(px[upperbound]>1024)) {
                 upperbound++;
             }
-            //System.out.println("IIII : "+upperbound);
             for (int j=0;j<numi;j++) {
                 pr[j] = px[0]/px[j];
                 //System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
@@ -177,7 +172,6 @@ public class NeoTiler {
             reader.setSeries(lowerbound);
             iWidth = reader.getSizeX();
             iHeight = reader.getSizeY();
-    //        System.out.println(iWidth+":::"+iHeight);
         } else {
             iWidth = 0;
             iHeight = 0;            
@@ -251,7 +245,6 @@ public class NeoTiler {
     
     public String GetImageInfo() {
         Model m = ModelFactory.createDefaultModel();
-       // m.setNsPrefix("exif", "http://www.w3.org/2003/12/exif/ns#");
         if (borked) {
             m.addLiteral(m.createResource("http://www.ebremer.com/a"), m.createProperty("http://www.w3.org/2003/12/exif/ns#status"), status);
         } else {
@@ -264,7 +257,6 @@ public class NeoTiler {
         StringWriter out = new StringWriter();
         JsonLDWriteContext ctx = new JsonLDWriteContext();
         ctx.setJsonLDContext(null);
-        //ctx.setJsonLDContext("\"http://iiif.io/api/image/2/context.json\"");
         ctx.setJsonLDContextSubstitution("\"http://iiif.io/api/image/2/context.json\"");
         RDFWriter w =
             RDFWriter.create()
@@ -288,6 +280,7 @@ public class NeoTiler {
         //System.out.println("J : "+jj);
         //System.out.println(iratio+" picked "+jj+" "+pi[jj]+" "+pr[jj]);
         //int oratio = pr[jj];
+        System.out.println("setting series to : "+pi[jj]);
         reader.setSeries(pi[jj]);
         //System.out.println("pre ratio : "+reader.getSizeX()+ " "+iWidth);
         double rr = ((double) reader.getSizeX())/((double) iWidth);

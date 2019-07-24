@@ -18,7 +18,7 @@ import java.util.TimerTask;
 public class ImageReaderPool {
     private final HashMap pool = new HashMap();
     private final Timer timer = new Timer();
-    private File f = new File("cache");
+    private final File f = new File("cache");
     
     ImageReaderPool() {
         //System.out.println("creating new pool");
