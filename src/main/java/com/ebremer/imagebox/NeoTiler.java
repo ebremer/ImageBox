@@ -273,18 +273,13 @@ public class NeoTiler {
         int iratio = w/tx;
         int jj = 0;
         //System.out.println("numi : "+numi+" "+iratio);
-        while ((jj<numi-1)&&(iratio>pr[jj])) {
+        while ((jj<numi)&&(iratio>pr[jj])) {
             //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> "+jj+"  "+pi[jj]+" "+pr[jj]+"   "+numi+"  "+iratio);
             jj++;
         }
-        //System.out.println("J : "+jj);
-        //System.out.println(iratio+" picked "+jj+" "+pi[jj]+" "+pr[jj]);
-        //int oratio = pr[jj];
-        System.out.println("setting series to : "+pi[jj]);
+        //System.out.println("setting series to : "+pi[jj]);
         reader.setSeries(pi[jj]);
-        //System.out.println("pre ratio : "+reader.getSizeX()+ " "+iWidth);
         double rr = ((double) reader.getSizeX())/((double) iWidth);
-        //System.out.println("Ratio : "+rr);
         int gx=(int) (x*rr);
         int gy=(int) (y*rr);
         int gw=(int) (w*rr);
