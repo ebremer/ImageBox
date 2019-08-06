@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
  * @author Erich Bremer
  */
 public class IIIF {
-    private static final Pattern pattern1 = Pattern.compile("/iiif/(.*)?/(\\d*),(\\d*),(\\d*),(\\d*)/(\\d*),/(\\d*)/default.jpg");
-    private static final Pattern pattern2 = Pattern.compile("/iiif/(.*)?/full/(\\d*),/(\\d*)/default.jpg");
-    private static final Pattern info = Pattern.compile("/iiif/(.*)?/info.js");
+    private static final Pattern PATTERN1 = Pattern.compile("/iiif/(.*)?/(\\d*),(\\d*),(\\d*),(\\d*)/(\\d*),/(\\d*)/default.jpg");
+    private static final Pattern PATTERN2 = Pattern.compile("/iiif/(.*)?/full/(\\d*),/(\\d*)/default.jpg");
+    private static final Pattern INFO = Pattern.compile("/iiif/(.*)?/info.js");
     private Matcher matcher;
     public URI uri = null;
     public int x;
@@ -33,7 +33,7 @@ public class IIIF {
 
     IIIF(String url) throws URISyntaxException {
         //System.out.println("IIIF("+url+")");
-        matcher = pattern1.matcher(url);
+        matcher = PATTERN1.matcher(url);
         if (matcher.find()) {
             //System.out.println("matched");
             tilerequest = true;
@@ -46,7 +46,7 @@ public class IIIF {
             tx = Integer.parseInt(matcher.group(6));
             rotation = Integer.parseInt(matcher.group(7));
         } else {
-            matcher = info.matcher(url);
+            matcher = INFO.matcher(url);
             if (matcher.find()) {
                 //System.out.println("matched here");
                 inforequest = true;
@@ -54,7 +54,7 @@ public class IIIF {
                 uri = new URI(matcher.group(1));
                 //System.out.println("ya ya after : "+uri);
             } else {
-                matcher = pattern2.matcher(url);
+                matcher = PATTERN2.matcher(url);
                 if (matcher.find()) {
                     tilerequest = true;
                     uri = new URI(matcher.group(1));

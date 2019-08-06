@@ -18,8 +18,6 @@ import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
-import loci.formats.ImageReader;
-import loci.formats.Memoizer;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.in.SVSReader;
@@ -31,15 +29,9 @@ import ome.xml.model.primitives.PositiveInteger;
 import org.apache.jena.query.DatasetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.JsonLDWriteContext;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.RDFWriter;
-import org.apache.jena.riot.writer.JsonLDWriter;
-import org.apache.jena.sparql.util.Context;
 
 /**
  *
@@ -70,10 +62,8 @@ public class NeoTiler {
     private boolean borked = false;
     private String status = "";
     private long lastaccessed;
-    private String id;
     
     public NeoTiler(String f) {
-        this.id = f;
         DebugTools.enableLogging("ERROR");
         lastaccessed = System.nanoTime();
         //System.out.println("NeoTiler : "+f);
