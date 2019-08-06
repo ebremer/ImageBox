@@ -1,5 +1,6 @@
 package com.ebremer.imagebox;
 
+import com.ebremer.imagebox.Enums.ImageFormat;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -78,19 +79,33 @@ public class iboxServlet extends HttpServlet {
             }
             originalImage = nt.FetchImage(i.x, i.y, i.w, i.h, i.tx, i.tx);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
-            jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            jpegParams.setCompressionQuality(1.0f);
-            ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
-            ImageOutputStream imageOut=ImageIO.createImageOutputStream(baos);
-            writer.setOutput(imageOut);
-            writer.write(null,new IIOImage(originalImage,null,null),jpegParams);                
-            baos.flush();
-            byte[] imageInByte = baos.toByteArray();
-            baos.close();
-            response.setContentType("image/jpg");
-            response.setContentLength(imageInByte.length);
-            response.getOutputStream().write(imageInByte);
+            if (i.imageformat == ImageFormat.JPG) {
+                ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
+                JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
+                jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                jpegParams.setCompressionQuality(1.0f);
+                ImageOutputStream imageOut=ImageIO.createImageOutputStream(baos);
+                writer.setOutput(imageOut);
+                writer.write(null,new IIOImage(originalImage,null,null),jpegParams);                
+                baos.flush();
+                byte[] imageInByte = baos.toByteArray();
+                baos.close();
+                response.setContentType("image/jpg");
+                response.setContentLength(imageInByte.length);
+                response.getOutputStream().write(imageInByte);
+            } else if (i.imageformat == ImageFormat.PNG) {
+                ImageWriter writer = ImageIO.getImageWritersByFormatName("png").next();
+                ImageWriteParam pjpegParams = writer.getDefaultWriteParam();
+                ImageOutputStream imageOut=ImageIO.createImageOutputStream(baos);
+                writer.setOutput(imageOut);
+                writer.write(null,new IIOImage(originalImage,null,null),pjpegParams);
+                baos.flush();
+                byte[] imageInByte = baos.toByteArray();
+                baos.close();
+                response.setContentType("image/png");
+                response.setContentLength(imageInByte.length);
+                response.getOutputStream().write(imageInByte);
+            }
         } else if (i.inforequest) {
             response.setContentType("application/json");
             PrintWriter writer=response.getWriter();

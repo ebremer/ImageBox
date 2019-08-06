@@ -3,9 +3,10 @@ var url=window.location.search;
 console.log("calling URL : "+url);
 var urlParams = new URLSearchParams(window.location.search);
 var p = urlParams.get('id');
-p = "http://localhost:8888/bog/https://s3.amazonaws.com/ebremeribox/TCGA-02-0001-01C-01-BS1.0cc8ca55-d024-440c-a4f0-01cf5b3af861.svs";
+//p = "http://localhost:8888/iiif/https://s3.amazonaws.com/ebremeribox/TCGA-02-0001-01C-01-BS1.0cc8ca55-d024-440c-a4f0-01cf5b3af861.svs";
+p = "http://localhost:8888/iiif/file:/problemfiles/TCGA-J2-8192-01Z-00-DX1.A784F381-7906-480F-99A1-0B88005953A0.svs";
 console.log("image ID : "+p);
-//fetch("http://localhost:8888/bog/file://problemfiles/TCGA-J2-8192-01Z-00-DX1.A784F381-7906-480F-99A1-0B88005953A0.svs/info.json").then(response => {
+//fetch("http://localhost:8888/iiif/file://problemfiles/TCGA-J2-8192-01Z-00-DX1.A784F381-7906-480F-99A1-0B88005953A0.svs/info.json").then(response => {
 fetch(p+"/info.json").then(response => {
     return response.json();
 }).then(data => {
