@@ -87,7 +87,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
             }
             String mimetype = "application/octet-stream";
             InputStreamResponseListener listener = new InputStreamResponseListener();
-            //System.out.println("URL : "+this.url);
+            System.out.println("URL : "+this.url);
             httpClient.newRequest(this.url).method(HttpMethod.HEAD).header("Accept", mimetype).send(listener);
             Response response = null;
             try {

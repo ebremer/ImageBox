@@ -34,6 +34,7 @@ public class iboxServlet extends HttpServlet {
     @Override
     protected void doGet( HttpServletRequest request,HttpServletResponse response ) throws ServletException,IOException {
         String req = request.getRequestURI();
+        System.out.println("REQ : "+req);
         IIIF i = null;
         try {
             i = new IIIF(req);
