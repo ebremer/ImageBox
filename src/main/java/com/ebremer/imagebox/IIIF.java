@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
  * @author Erich Bremer
  */
 public class IIIF {
-    private static final Pattern PATTERN1 = Pattern.compile("/iiif/(.*)?/(\\d*),(\\d*),(\\d*),(\\d*)/(\\d*),/(\\d*)/default.(jpg|png)");
-    private static final Pattern PATTERN2 = Pattern.compile("/iiif/(.*)?/full/(\\d*),/(\\d*)/default.(jpg|png)");
-    private static final Pattern INFO = Pattern.compile("/iiif/(.*)?/info.js");
+    private static final Pattern PATTERN1 = Pattern.compile("(.*)?/(\\d*),(\\d*),(\\d*),(\\d*)/(\\d*),/(\\d*)/default.(jpg|png)");
+    private static final Pattern PATTERN2 = Pattern.compile("(.*)?/full/(\\d*),/(\\d*)/default.(jpg|png)");
+    private static final Pattern INFO = Pattern.compile("(.*)?/info.js");
     private Matcher matcher;
     public URI uri = null;
     public int x;
@@ -52,11 +52,8 @@ public class IIIF {
         } else {
             matcher = INFO.matcher(url);
             if (matcher.find()) {
-                //System.out.println("matched here");
                 inforequest = true;
-                //System.out.println("ya ya "+matcher.group(1));
                 uri = new URI(matcher.group(1));
-                //System.out.println("ya ya after : "+uri);
             } else {
                 matcher = PATTERN2.matcher(url);
                 if (matcher.find()) {
