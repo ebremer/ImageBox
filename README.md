@@ -1,2 +1,2 @@
-ImageBox Server 1.0
+ImageBox Server 2.0
 
