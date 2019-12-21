@@ -17,7 +17,6 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
-import loci.formats.IFormatReader;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.in.SVSReader;
@@ -38,8 +37,7 @@ import org.apache.jena.riot.RDFWriter;
  * @author erich
  */
 public class NeoTiler {
-    private IFormatReader warp;
-    private static final File f = new File("tmp");
+    //private IFormatReader warp;
     //private Memoizer reader;
     private SVSReader reader;
     private ServiceFactory factory;
@@ -56,7 +54,7 @@ public class NeoTiler {
     private final int[] py;
     private final int[] pr;
     private final int[] pi;
-    private final float[] pratio;
+    //private final float[] pratio;
     private double mppx;
     private double mppy;
     private boolean borked = false;
@@ -66,7 +64,6 @@ public class NeoTiler {
     public NeoTiler(String f) {
         DebugTools.enableLogging("ERROR");
         lastaccessed = System.nanoTime();
-        //System.out.println("NeoTiler : "+f);
         String getthis = null;
         if (f.startsWith("http")) {
             HTTPIRandomAccess3 bbb = new HTTPIRandomAccess3(f);
@@ -124,7 +121,7 @@ public class NeoTiler {
             py = new int[numi];
             pr = new int[numi];
             pi = new int[numi];
-            pratio = new float[numi];
+            //pratio = new float[numi];
             CoreMetadata big;
             System.out.println("=============================================================");
             for (int j=0;j<reader.getSeriesCount();j++) {
@@ -169,7 +166,7 @@ public class NeoTiler {
             py = null;
             pr = null;
             pi = null;
-            pratio = null;
+            //pratio = null;
         }
     }
     
@@ -290,7 +287,7 @@ public class NeoTiler {
         meta.setRoot(newRoot);
         meta.setPixelsSizeX(new PositiveInteger(width), 0);
         meta.setPixelsSizeY(new PositiveInteger(height), 0);
-        byte[] buf = null;
+        byte[] buf;
         BufferedImage bb = null;
         try {
             buf = reader.openBytes(0, xpos, ypos, width, height);

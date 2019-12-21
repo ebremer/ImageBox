@@ -16,8 +16,6 @@ public class ImageReaderPool {
     private final File f = new File("cache");
     
     ImageReaderPool() {
-        //System.out.println("creating new pool");
-       
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
