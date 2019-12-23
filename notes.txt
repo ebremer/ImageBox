@@ -1,0 +1,3 @@
+http://localhost:8888/iiif/?iiif=/image.tif/info.json
+
+http://localhost:8888/iiif/?iiif=/image.tif/0,0,1024,1024/1024,/0/.default.jpg
