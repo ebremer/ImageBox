@@ -29,7 +29,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class iboxServlet extends HttpServlet {
     static final ImageReaderPool pool = new ImageReaderPool();
-    Path fpath = Paths.get(System.getProperty("user.dir")+"/"+Settings.webfiles);
+    //Path fpath = Paths.get(System.getProperty("user.dir")+"/"+Settings.webfiles);
+    Path fpath = Paths.get(Settings.webfiles);
     
     @Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {

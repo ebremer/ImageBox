@@ -6,5 +6,5 @@ package com.ebremer.imagebox;
  */
 public class Settings {
     static int port = 8888;
-    static String webfiles = "files/webfiles";
+    static String webfiles = "/imagebox";
 }
