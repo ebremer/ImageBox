@@ -1,17 +1,6 @@
 package com.ebremer.imagebox;
 
-import java.awt.Point;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -63,7 +52,6 @@ public class NeoTiler {
     private final int[] py;
     private final int[] pr;
     private final int[] pi;
-    //private final float[] pratio;
     private double mppx;
     private double mppy;
     private boolean borked = false;
@@ -73,7 +61,7 @@ public class NeoTiler {
     public NeoTiler(String f) {
         DebugTools.enableLogging("ERROR");
         lastaccessed = System.nanoTime();
-        String getthis = null;
+        String getthis;
         if (f.startsWith("http")) {
             HTTPIRandomAccess3 bbb = new HTTPIRandomAccess3(f);
             Location.mapFile("charm", bbb);
@@ -85,9 +73,7 @@ public class NeoTiler {
         if (!cache.exists()) {
             cache.mkdir();
         }
-        //warp = new SVSReader();
         reader = new SVSReader();
-        //reader = new Memoizer(warp, 0L, new File("cache"));
         reader.setGroupFiles(true);
         reader.setMetadataFiltered(true);
         reader.setOriginalMetadataPopulated(true);
@@ -114,12 +100,6 @@ public class NeoTiler {
                 lowerbound = MaxImage(reader);
             }
             Hashtable<String, Object> hh = reader.getSeriesMetadata();
-            //Enumeration ee = hh.keys();
-        //while (ee.hasMoreElements()) {
-//            String ya = (String) ee.nextElement();
-//            System.out.println("*****>>>>> "+ya);
-//        }
-  //          System.out.println(hh.get("MPP"));
             if (hh.containsKey("MPP")) {
                 double mpp = Double.parseDouble((String) hh.get("MPP"));
                 mppx = mpp;
@@ -160,11 +140,8 @@ public class NeoTiler {
             }
             for (int j=0;j<numi;j++) {
                 pr[j] = px[0]/px[j];
-                //System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
             }
             numi = upperbound - lowerbound;
-            //System.out.println("lower bound : "+lowerbound);
-            //System.out.println("upper bound : "+upperbound);
             reader.setSeries(lowerbound);
             iWidth = reader.getSizeX();
             iHeight = reader.getSizeY();
@@ -175,7 +152,6 @@ public class NeoTiler {
             py = null;
             pr = null;
             pi = null;
-            //pratio = null;
         }
     }
     
@@ -203,7 +179,6 @@ public class NeoTiler {
         lastaccessed = System.nanoTime();
     }
 
-//    public int MaxImage(Memoizer reader) {
     public int MaxImage(SVSReader reader) {
         int ii = 0;
         int maxseries = 0;
@@ -265,15 +240,11 @@ public class NeoTiler {
     }
     
     public BufferedImage FetchImage(int x, int y, int w, int h, int tx, int ty) {
-        //System.out.println("FetchImage : "+x+" "+y+" "+w+" "+h+" "+tx+" "+ty);
         int iratio = w/tx;
         int jj = 0;
-        //System.out.println("numi : "+numi+" "+iratio);
         while ((jj<numi)&&(iratio>pr[jj])) {
-            //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>> "+jj+"  "+pi[jj]+" "+pr[jj]+"   "+numi+"  "+iratio);
             jj++;
         }
-        //System.out.println("setting series to : "+pi[jj]);
         reader.setSeries(pi[jj]);
         double rr = ((double) reader.getSizeX())/((double) iWidth);
         int gx=(int) (x*rr);
@@ -285,7 +256,6 @@ public class NeoTiler {
     }
     
     private BufferedImage GrabImage(int xpos, int ypos, int width, int height) {
-        //System.out.println("grab image : "+xpos+ " "+ypos+" "+width+" "+height);
         meta.setRoot(newRoot);
         meta.setPixelsSizeX(new PositiveInteger(width), 0);
         meta.setPixelsSizeY(new PositiveInteger(height), 0);
