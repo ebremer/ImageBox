@@ -35,8 +35,6 @@ import org.apache.jena.riot.RDFWriter;
  * @author erich
  */
 public class NeoTiler {
-    //private IFormatReader warp;
-    //private Memoizer reader;
     private SVSReader reader;
     private ServiceFactory factory;
     private OMEXMLService service;
@@ -110,14 +108,11 @@ public class NeoTiler {
             py = new int[numi];
             pr = new int[numi];
             pi = new int[numi];
-            //pratio = new float[numi];
             CoreMetadata big;
-            System.out.println("=============================================================");
             for (int j=0;j<reader.getSeriesCount();j++) {
                 big = reader.getCoreMetadataList().get(j);
-                System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
+                //System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
             }
-            System.out.println("=============================================================");
             big = reader.getCoreMetadataList().get(lowerbound);
             float ratio = ((float) big.sizeX)/((float) big.sizeY);
             for (int j=lowerbound;j<(numi+lowerbound);j++) {
