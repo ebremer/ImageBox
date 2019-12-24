@@ -109,10 +109,10 @@ public class NeoTiler {
             pr = new int[numi];
             pi = new int[numi];
             CoreMetadata big;
-            for (int j=0;j<reader.getSeriesCount();j++) {
-                big = reader.getCoreMetadataList().get(j);
+            //for (int j=0;j<reader.getSeriesCount();j++) {
+              //  big = reader.getCoreMetadataList().get(j);
                 //System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
-            }
+            //}
             big = reader.getCoreMetadataList().get(lowerbound);
             float ratio = ((float) big.sizeX)/((float) big.sizeY);
             for (int j=lowerbound;j<(numi+lowerbound);j++) {
