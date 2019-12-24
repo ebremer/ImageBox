@@ -48,7 +48,6 @@ import org.apache.jena.riot.RDFWriter;
 public class NeoTiler {
     //private IFormatReader warp;
     //private Memoizer reader;
-    private static final ColorModel GRAY_ALPHA = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
     private SVSReader reader;
     private ServiceFactory factory;
     private OMEXMLService service;
@@ -283,14 +282,6 @@ public class NeoTiler {
         int gh=(int) (h*rr);
         BufferedImage bi = GrabImage(gx,gy,gw,gh);
         return AWTImageTools.scale(bi, tx, ty, false);
-    }
-    
-    public static BufferedImage GrayScaleAlphaBufferedImage(int width, int height) {
-        int[] bandOffsets = new int[] {1, 0};
-        int bands = bandOffsets.length;
-        DataBuffer buffer = new DataBufferByte(width * height * bands);
-        WritableRaster raster = Raster.createInterleavedRaster(buffer, width, height, width * bands, bands, bandOffsets, new Point(0, 0));
-        return new BufferedImage(GRAY_ALPHA, raster, false, null);
     }
     
     private BufferedImage GrabImage(int xpos, int ypos, int width, int height) {
