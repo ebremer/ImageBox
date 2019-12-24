@@ -1,8 +1,17 @@
 package com.ebremer.imagebox;
 
+import java.awt.Point;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -39,6 +48,7 @@ import org.apache.jena.riot.RDFWriter;
 public class NeoTiler {
     //private IFormatReader warp;
     //private Memoizer reader;
+    private static final ColorModel GRAY_ALPHA = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY),true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
     private SVSReader reader;
     private ServiceFactory factory;
     private OMEXMLService service;
@@ -272,14 +282,15 @@ public class NeoTiler {
         int gw=(int) (w*rr);
         int gh=(int) (h*rr);
         BufferedImage bi = GrabImage(gx,gy,gw,gh);
-        BufferedImage target;
-        AffineTransform at = new AffineTransform();
-        double scale = (((double) tx)/((double) bi.getWidth()));
-        at.scale(scale,scale);
-        AffineTransformOp scaleOp =  new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-        target = new BufferedImage((int)(gw*scale),(int)(gh*scale),bi.getType());
-        scaleOp.filter(bi, target);
-        return target;
+        return AWTImageTools.scale(bi, tx, ty, false);
+    }
+    
+    public static BufferedImage GrayScaleAlphaBufferedImage(int width, int height) {
+        int[] bandOffsets = new int[] {1, 0};
+        int bands = bandOffsets.length;
+        DataBuffer buffer = new DataBufferByte(width * height * bands);
+        WritableRaster raster = Raster.createInterleavedRaster(buffer, width, height, width * bands, bands, bandOffsets, new Point(0, 0));
+        return new BufferedImage(GRAY_ALPHA, raster, false, null);
     }
     
     private BufferedImage GrabImage(int xpos, int ypos, int width, int height) {
