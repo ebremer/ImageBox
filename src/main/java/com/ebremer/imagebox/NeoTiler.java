@@ -57,7 +57,6 @@ public final class NeoTiler {
     
     public NeoTiler(String f) {
         DebugTools.enableLogging("ERROR");
-        url = f;
         lastaccessed = System.nanoTime();
         String getthis;
         if (f.startsWith("http")) {
@@ -108,10 +107,6 @@ public final class NeoTiler {
             py = new int[numi];
             pr = new int[numi];
             pi = new int[numi];
-            //for (int j=0;j<reader.getSeriesCount();j++) {
-//                big = reader.getCoreMetadataList().get(j);
-//                System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
-//            }
             big = reader.getCoreMetadataList().get(lowerbound);
             float ratio = ((float) big.sizeX)/((float) big.sizeY);
             for (int j=lowerbound;j<(numi+lowerbound);j++) {
@@ -147,6 +142,10 @@ public final class NeoTiler {
             pr = null;
             pi = null;
         }
+    }
+    
+    public void setURL(String r) {
+        url = r;
     }
     
     public int GetWidth() {
@@ -243,7 +242,7 @@ public final class NeoTiler {
     public String GetImageInfo() {
         JsonBuilderFactory jbf = Json.createBuilderFactory(null);
         JsonObjectBuilder value = jbf.createObjectBuilder()
-                .add("@id", "http://localhost:8888/iiif/?iiif=/TCGA-B6-A1KC-01Z-00-DX1.4DD3E48B-F434-499F-9FF1-0FFD2883A375.svs")
+                .add("@id", url.substring(0, url.length()-10))
                 .add("@context", "http://iiif.io/api/image/2/context.json")
                 .add("height", iHeight)
                 .add("width", iWidth)
@@ -253,10 +252,25 @@ public final class NeoTiler {
         
         JsonArrayBuilder sizes = jbf.createArrayBuilder();
         JsonArrayBuilder scalefactors = jbf.createArrayBuilder();
-        for (int j=0;j<px.length-3;j++) {
-            System.out.println(j+" >>> "+px[j]+","+py[j]+" aspect ratio : "+pr[j]);
+        /*
+        int clip = px.length-3;
+        for (int j=0;j<clip;j++) {
             scalefactors.add(pr[j]);
+        }
+        for (int j=clip-1;j>=0;j--) {
             sizes.add(jbf.createObjectBuilder().add("width", px[j]).add("height", py[j]));
+        }*/
+        
+        int clip = Math.max(iWidth, iHeight);
+        clip = (int) Math.ceil(Math.log(clip)/Math.log(2));
+        clip = clip - (int) (Math.ceil(Math.log(Math.max(reader.getOptimalTileHeight(), reader.getOptimalTileHeight()))/Math.log(2)));
+        for (int j=0;j<clip;j++) {
+            int pow = (int) Math.pow(2, j);
+            scalefactors.add(pow);
+        }
+        for (int j=clip-1;j>=0;j--) {
+            int pow = (int) Math.pow(2, j);
+            sizes.add(jbf.createObjectBuilder().add("width", iWidth/pow).add("height", iHeight/pow));
         }
         value.add("sizes", sizes);
         JsonArrayBuilder profile = jbf.createArrayBuilder();

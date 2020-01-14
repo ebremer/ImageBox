@@ -109,6 +109,7 @@ public class iboxServlet extends HttpServlet {
                     response.getOutputStream().write(imageInByte);
                 }
             } else if (i.inforequest) {
+                nt.setURL(request.getRequestURL().toString()+"?"+request.getQueryString());
                 response.setContentType("application/json");
                 PrintWriter writer=response.getWriter();
                 writer.append(nt.GetImageInfo());
