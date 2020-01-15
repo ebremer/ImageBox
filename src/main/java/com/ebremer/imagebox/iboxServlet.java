@@ -110,6 +110,7 @@ public class iboxServlet extends HttpServlet {
                 }
             } else if (i.inforequest) {
                 nt.setURL(request.getRequestURL().toString()+"?"+request.getQueryString());
+                nt.setURL(Settings.ProxyHostName+request.getRequestURI().toString()+"?"+request.getQueryString());
                 response.setContentType("application/json");
                 PrintWriter writer=response.getWriter();
                 writer.append(nt.GetImageInfo());
