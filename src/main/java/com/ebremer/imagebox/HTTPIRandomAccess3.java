@@ -64,6 +64,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     public long calls = 0;
     private long numreadByte = 0;
     private long numreadShort = 0;
+    private long numreadLong = 0;
     private long numreadByteRange = 0;
     private long minrange = Long.MAX_VALUE;
     private long maxrange = Long.MIN_VALUE;
@@ -354,7 +355,14 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public long readLong() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        numreadLong++;
+        long b = 0;
+        if ((bah.length()-bah.getFilePointer())<8) {
+            FillBuffer(pos,chunksize);
+        }
+        b = bah.readLong();
+        pos=pos+4;
+        return b;
     }
 
     @Override

@@ -6,7 +6,7 @@ package com.ebremer.imagebox;
  */
 public class Settings {
     static int port = 8899;
-    static String webfiles = "/data/erich/tcgademo";
+    static String webfiles = "/svs";
     static long MaxAgeReaderPool = 600;
     static long ReaderPoolScanDelay = 600;
     static long ReaderPoolScanRate = 60;
