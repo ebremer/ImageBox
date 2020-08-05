@@ -372,7 +372,6 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     @Override
     public float readFloat() throws IOException {
     	numreadFloat++;
-        //System.out.print("readInt() = ");
         float b = 0;
         if ((bah.length()-bah.getFilePointer())<4) {
             FillBuffer(pos,chunksize);

@@ -20,6 +20,7 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
+import loci.formats.IFormatReader;
 import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
@@ -37,6 +38,7 @@ import ome.xml.model.primitives.PositiveInteger;
  */
 public class NeoTiler {
     //private IFormatReader warp;
+    IFormatReader uni;
     private static final File f = new File("tmp");
     //private Memoizer SReader;
     private SVSReader SReader;
@@ -175,7 +177,7 @@ public class NeoTiler {
             }
         } else if (fileType.equals("ndpi")) {
         	NReader = new NDPIReader();
-                
+            uni = NReader;    
             //NReader = new Memoizer(warp, 0L, new File("cache"));
             NReader.setGroupFiles(true);
             NReader.setMetadataFiltered(true);
@@ -413,7 +415,7 @@ public class NeoTiler {
         
         int clip = Math.max(iWidth, iHeight);
         clip = (int) Math.ceil(Math.log(clip)/Math.log(2));
-        clip = clip - (int) (Math.ceil(Math.log(Math.max(reader.getOptimalTileHeight(), reader.getOptimalTileHeight()))/Math.log(2)));
+        clip = clip - (int) (Math.ceil(Math.log(Math.max(uni.getOptimalTileHeight(), uni.getOptimalTileHeight()))/Math.log(2)));
         for (int j=0;j<clip;j++) {
             int pow = (int) Math.pow(2, j);
             scalefactors.add(pow);
@@ -450,8 +452,8 @@ public class NeoTiler {
                         .add("formats", formats)
                         .add("qualities", qualities));
         JsonArrayBuilder tiles = jbf.createArrayBuilder().add(jbf.createObjectBuilder()
-                                                                .add("width", reader.getOptimalTileWidth())
-                                                                .add("height", reader.getOptimalTileHeight())
+                                                                .add("width", uni.getOptimalTileWidth())
+                                                                .add("height", uni.getOptimalTileHeight())
                                                                 .add("scaleFactors", scalefactors));
         value.add("protocol","http://iiif.io/api/image").add("profile", profile).add("tiles", tiles);
         return value.build().toString();
