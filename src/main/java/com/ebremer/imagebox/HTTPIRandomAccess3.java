@@ -40,6 +40,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
 import ome.xml.model.primitives.PositiveInteger;
+
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.util.InputStreamResponseListener;
@@ -72,9 +73,11 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     private long numreadUnsignedShort = 0;
     private long numreadInt = 0;
     private String uuid = UUID.randomUUID().toString();
+	private int numreadLong;
+	private int numreadFloat;
     
     HTTPIRandomAccess3(String url) {
-        //System.out.println("HTTPIRandomAccess3 initializing..."+uuid+" "+url);
+//        System.out.println("HTTPIRandomAccess3 initializing..."+uuid+" "+url);
         tm = new TreeMap<>();
         this.url = url;
         if (httpClient == null) {
@@ -114,7 +117,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     private void FillBuffer(long start, long len) {
         calls++;
-        //System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
+//        System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
         if (len>this.length) {
             System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
             System.out.println("clipping request..."+len+" to "+this.length);
@@ -156,8 +159,10 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public void close() throws IOException {
+//    	System.out.println("CLOSING HERE");
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    	
 
     @Override
     public long getFilePointer() throws IOException {
@@ -355,19 +360,27 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public long readLong() throws IOException {
-        numreadLong++;
+    	numreadLong++;
         long b = 0;
         if ((bah.length()-bah.getFilePointer())<8) {
             FillBuffer(pos,chunksize);
         }
         b = bah.readLong();
-        pos=pos+4;
+        pos=pos+8;
         return b;
     }
 
     @Override
     public float readFloat() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    	numreadFloat++;
+        //System.out.print("readInt() = ");
+        float b = 0;
+        if ((bah.length()-bah.getFilePointer())<4) {
+            FillBuffer(pos,chunksize);
+        }
+        b = bah.readFloat();
+        pos=pos+4;
+        return b;
     }
 
     @Override
