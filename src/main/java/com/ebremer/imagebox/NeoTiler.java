@@ -1,5 +1,7 @@
 package com.ebremer.imagebox;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import loci.common.services.ServiceException;
 import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
+import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.in.SVSReader;
@@ -33,10 +36,11 @@ import ome.xml.model.primitives.PositiveInteger;
  * @author erich
  */
 public class NeoTiler {
-    private IFormatReader warp;
+    //private IFormatReader warp;
     private static final File f = new File("tmp");
     //private Memoizer SReader;
     private SVSReader SReader;
+    private SVSReader reader;
     private NDPIReader NReader;
     private ServiceFactory factory;
     private OMEXMLService service;
@@ -59,6 +63,7 @@ public class NeoTiler {
     private long lastaccessed;
     private CoreMetadata big;
     private String url;
+    private final float[] pratio;
     
     public NeoTiler(String f) {
         DebugTools.enableLogging("ERROR");
@@ -170,6 +175,7 @@ public class NeoTiler {
             }
         } else if (fileType.equals("ndpi")) {
         	NReader = new NDPIReader();
+                
             //NReader = new Memoizer(warp, 0L, new File("cache"));
             NReader.setGroupFiles(true);
             NReader.setMetadataFiltered(true);
@@ -267,6 +273,7 @@ public class NeoTiler {
             py = null;
             pr = null;
             pi = null;
+            pratio = null;
         }
         //warp = new SVSReader();
 
@@ -381,6 +388,7 @@ public class NeoTiler {
         return out.toString();
     }
 */
+        
     public String GetImageInfo() {
         JsonBuilderFactory jbf = Json.createBuilderFactory(null);
         JsonObjectBuilder value = jbf.createObjectBuilder()

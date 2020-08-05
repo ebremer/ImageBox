@@ -73,8 +73,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     private long numreadUnsignedShort = 0;
     private long numreadInt = 0;
     private String uuid = UUID.randomUUID().toString();
-	private int numreadLong;
-	private int numreadFloat;
+    private int numreadFloat;
     
     HTTPIRandomAccess3(String url) {
 //        System.out.println("HTTPIRandomAccess3 initializing..."+uuid+" "+url);
