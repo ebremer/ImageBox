@@ -25,7 +25,7 @@ import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.in.SVSReader;
-import loci.formats.in.NDPIReader;
+//import loci.formats.in.NDPIReader;
 import loci.formats.meta.IMetadata;
 import loci.formats.meta.MetadataStore;
 import loci.formats.services.OMEXMLService;
@@ -42,7 +42,7 @@ public class NeoTiler {
     private static final File f = new File("tmp");
     //private Memoizer SReader;
     private SVSReader SReader;
-    private SVSReader reader;
+//    private SVSReader reader;
     private NDPIReader NReader;
     private ServiceFactory factory;
     private OMEXMLService service;
@@ -72,10 +72,13 @@ public class NeoTiler {
         lastaccessed = System.nanoTime();
         String getthis;
         if (f.startsWith("http")) {
+            System.out.println("RANGE REQUEST "+f);
             HTTPIRandomAccess3 bbb = new HTTPIRandomAccess3(f);
+          
             Location.mapFile("charm", bbb);
             getthis = "charm";
         } else {
+            System.out.println("nooooooooo RANGE REQUEST");
             getthis = f;
         }
         File cache = new File("cache");
@@ -179,9 +182,9 @@ public class NeoTiler {
         	NReader = new NDPIReader();
             uni = NReader;    
             //NReader = new Memoizer(warp, 0L, new File("cache"));
-            NReader.setGroupFiles(true);
-            NReader.setMetadataFiltered(true);
-            NReader.setOriginalMetadataPopulated(true);
+            //NReader.setGroupFiles(true);
+            //NReader.setMetadataFiltered(true);
+            //NReader.setOriginalMetadataPopulated(true);
             try {
                 factory = new ServiceFactory();
                 service = factory.getInstance(OMEXMLService.class);
@@ -493,7 +496,7 @@ public class NeoTiler {
     }
     
     private BufferedImage GrabImage(int xpos, int ypos, int width, int height, String type) {
-        //System.out.println("grab image : "+xpos+ " "+ypos+" "+width+" "+height);
+        System.out.println("grab image : "+xpos+ " "+ypos+" "+width+" "+height+"=== "+type);
         meta.setRoot(newRoot);
         meta.setPixelsSizeX(new PositiveInteger(width), 0);
         meta.setPixelsSizeY(new PositiveInteger(height), 0);
@@ -504,12 +507,19 @@ public class NeoTiler {
         		buf = SReader.openBytes(0, xpos, ypos, width, height);
         		bb = AWTImageTools.makeImage(buf, SReader.isInterleaved(), meta, 0);        		
         	} else if (type.equals("ndpi")) {
-        		buf = NReader.openBytes(0, xpos, ypos, width, height);
-        		bb = AWTImageTools.makeImage(buf, NReader.isInterleaved(), meta, 0);
+                    System.out.println("nreader is "+(NReader==null));
+                    NReader.setSeries(0);
+                    System.out.println(NReader.getSizeX()+"x"+NReader.getSizeY());
+                    //buf = NReader.openBytes(0, xpos, ypos, width, height);
+                    buf = NReader.openBytes(0, 0, 0, 4096, 4096);
+                    System.out.println("image is "+(buf==null));
+                    bb = AWTImageTools.makeImage(buf, NReader.isInterleaved(), meta, 0);
         	}
         } catch (FormatException | IOException ex) {
+            System.out.println("I'm dying....ERROR");
             Logger.getLogger(NeoTiler.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         return bb;
     }
 }

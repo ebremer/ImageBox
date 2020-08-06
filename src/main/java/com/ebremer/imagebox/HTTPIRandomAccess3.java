@@ -158,8 +158,8 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public void close() throws IOException {
-//    	System.out.println("CLOSING HERE");
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Why am I closing"); 
+        System.out.println("I'm a gonna do nothing....");
     }
     	
 
@@ -206,8 +206,15 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int read(byte[] b, int off, int len) throws IOException {      
+        System.out.println(pos +" "+length+" READ "+b.length+" "+off+" "+len);
+        numreadByte++;
+        int i = 0;
+        while (i<len) {
+            b[i+off] = readByte();
+            i++;
+        }
+        return i;
     }
 
     @Override
@@ -372,8 +379,10 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     @Override
     public float readFloat() throws IOException {
     	numreadFloat++;
+        System.out.println("I'm FLOATING....."+numreadFloat);
         float b = 0;
         if ((bah.length()-bah.getFilePointer())<4) {
+            System.out.println("Extending buffer...");
             FillBuffer(pos,chunksize);
         }
         b = bah.readFloat();
@@ -547,11 +556,15 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public boolean exists() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public long skipBytes(long l) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println(pos+" Skip : "+l);
+        seek(pos+l);
+        return l;
+        
     }   
 }
