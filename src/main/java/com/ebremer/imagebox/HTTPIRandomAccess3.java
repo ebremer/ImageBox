@@ -56,8 +56,8 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     private String url = null;
     private HttpClient httpClient = null;
     private long length = -1;
-    private long bufferstart = Integer.MAX_VALUE;
-    public long chunksize = (long) Math.pow(2,15);
+    private long bufferstart = Long.MAX_VALUE;
+    public long chunksize = (long) Math.pow(2,22);
     private long pos;
     private ByteArrayHandle bah;
     private ByteOrder order;
@@ -76,7 +76,6 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     private int numreadFloat;
     
     HTTPIRandomAccess3(String url) {
-//        System.out.println("HTTPIRandomAccess3 initializing..."+uuid+" "+url);
         tm = new TreeMap<>();
         this.url = url;
         if (httpClient == null) {
@@ -116,10 +115,10 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     private void FillBuffer(long start, long len) {
         calls++;
-//        System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
+        System.out.println("xFillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
         if (len>this.length) {
-            System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
-            System.out.println("clipping request..."+len+" to "+this.length);
+            //System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
+            System.out.println("CLIPPING request..."+len+" to "+this.length);
             len = this.length;
         }
         byte[] bytes = null;
@@ -186,6 +185,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public int read(byte[] b) throws IOException {
+        System.out.println("read(byte[] b)");
         numreadByteRange++;
         avgrange = avgrange + b.length;
         if (b.length>maxrange) {
@@ -238,11 +238,11 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
                 }
             }
             Entry entry = tm.floorEntry((Long)pos);
-            //System.out.println("SIZE : "+tm.size());
             if (entry==null) {
-                //System.out.println(Long.toHexString(pos)+" not in cache...");
+                System.out.println(Long.toHexString(pos)+" not in cache...");
                 FillBuffer(pos,chunksize);
-                //FillBuffer(0,315219369L);
+                //System.out.println("Fullo buffer hack...");
+                //FillBuffer(0,702863925);
             } else {
                 ByteArrayHandle bh = (ByteArrayHandle) entry.getValue();
                 bufferstart = (long) entry.getKey();
@@ -287,7 +287,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public int skipBytes(int n) throws IOException {
-        //System.out.println("skipBytes("+n+")");
+        System.out.print("skipBytes(int n) = ");
         if (n>(bah.length()-bah.getFilePointer())) {
             seek(pos+n);
         } else {
@@ -327,7 +327,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
         numreadShort++;
         //System.out.print("readShort() = ");
         if ((bah.length()-bah.getFilePointer())==0) {
-            System.out.println("untested");
+            System.out.println("untested readShort");
             FillBuffer(pos,chunksize);
         }
         short b = bah.readShort();
@@ -339,7 +339,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     @Override
     public int readUnsignedShort() throws IOException {
         numreadUnsignedShort++;
-        //System.out.print("readUnsignedShort() = ");
+        System.out.print("readUnsignedShort() = ");
         int s = readShort() & 0xffff;
         return s;
     }
@@ -352,20 +352,20 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     @Override
     public int readInt() throws IOException {
         numreadInt++;
-        //System.out.print("readInt() = ");
+        System.out.println("readInt()");
         int b = 0;
         if ((bah.length()-bah.getFilePointer())<4) {
-            //System.out.println("untested 3");
+            System.out.println("trigger!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             FillBuffer(pos,chunksize);
         }
         b = bah.readInt();
         pos=pos+4;
-        //System.out.println(Integer.toHexString(b));
         return b;
     }
 
     @Override
     public long readLong() throws IOException {
+        System.out.print("readLong()");
     	numreadLong++;
         long b = 0;
         if ((bah.length()-bah.getFilePointer())<8) {

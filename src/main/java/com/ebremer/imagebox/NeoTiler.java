@@ -21,7 +21,6 @@ import loci.common.services.ServiceFactory;
 import loci.formats.CoreMetadata;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
-import loci.formats.ImageReader;
 import loci.formats.MetadataTools;
 import loci.formats.gui.AWTImageTools;
 import loci.formats.in.SVSReader;
@@ -507,11 +506,9 @@ public class NeoTiler {
         		buf = SReader.openBytes(0, xpos, ypos, width, height);
         		bb = AWTImageTools.makeImage(buf, SReader.isInterleaved(), meta, 0);        		
         	} else if (type.equals("ndpi")) {
-                    System.out.println("nreader is "+(NReader==null));
-                    NReader.setSeries(0);
                     System.out.println(NReader.getSizeX()+"x"+NReader.getSizeY());
-                    //buf = NReader.openBytes(0, xpos, ypos, width, height);
-                    buf = NReader.openBytes(0, 0, 0, 4096, 4096);
+                    buf = NReader.openBytes(0, xpos, ypos, width, height);
+                    //buf = NReader.openBytes(0, 0, 0, 4096, 4096);
                     System.out.println("image is "+(buf==null));
                     bb = AWTImageTools.makeImage(buf, NReader.isInterleaved(), meta, 0);
         	}
