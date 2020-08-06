@@ -229,7 +229,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public void seek(long pos) throws IOException {
-        //System.out.println("seek("+Long.toHexString(pos)+")");
+        System.out.println("seek("+Long.toHexString(pos)+")");
         if ((pos<bufferstart) || (pos>bufferstart+bah.length())) {
             if (bah!=null) {
                 //System.out.println("saving "+Long.toHexString(bufferstart)+" into cache...");
@@ -251,7 +251,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
                 bah.setOrder(order);
                 this.pos = pos;
                 if ((pos<bufferstart) || (pos>bufferstart+bah.length())) {
-                    //System.out.println(bufferstart+" not good enough, need to load new data...");
+                    System.out.println(bufferstart+" not good enough, need to load new data...");
                     FillBuffer(pos,chunksize);
                 } else {
                     bah.seek(pos-bufferstart);
@@ -308,7 +308,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
         //System.out.print("readByte() = ");
         byte b = 0;
         if (bah.getFilePointer()==bah.length()) {
-            //System.out.println("untested 2 - "+pos+" "+chunksize);
+            System.out.println("readByte() untested 2 - "+pos+" "+chunksize);
             FillBuffer(pos,chunksize);
         }
         b = bah.readByte();
