@@ -20,12 +20,12 @@
             <groupId>org.apache.jena</groupId>
             <artifactId>apache-jena-libs</artifactId>
             <type>pom</type>
-            <version>3.12.0</version>
+            <version>3.13.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>
-            <version>3.12.0</version>
+            <version>3.13.1</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -36,13 +36,13 @@
         <dependency>
             <groupId>ome</groupId>
             <artifactId>formats-gpl</artifactId>
-            <version>6.1.1</version>
+            <version>6.5.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>ome</groupId>
             <artifactId>loci_tools</artifactId>
-            <version>6.1.1</version>
+            <version>6.5.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -60,6 +60,11 @@
             <artifactId>jetty-servlet</artifactId>
             <version>9.4.20.v20190813</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.1.4</version>
         </dependency>
     </dependencies>
     <build>

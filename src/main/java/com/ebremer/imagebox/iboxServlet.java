@@ -28,12 +28,17 @@ import javax.servlet.http.HttpServletResponse;
  * @author erich
  */
 public class iboxServlet extends HttpServlet {
-    static final ImageReaderPool pool = new ImageReaderPool();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	static final ImageReaderPool pool = new ImageReaderPool();
     Path fpath = Paths.get(System.getProperty("user.dir")+"/"+Settings.webfiles);
     
     @Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException {
         String iiif = request.getParameter("iiif");
+//        System.out.println(iiif);
         if (iiif!=null) {
             IIIF i = null;
             try {
@@ -59,6 +64,7 @@ public class iboxServlet extends HttpServlet {
             }
             if (nt.isBorked()) {
                 response.setContentType("application/json");
+                response.setHeader("Access-Control-Allow-Origin", "*");
                 response.setStatus(500);
                 PrintWriter writer=response.getWriter();
                 writer.append(nt.GetImageInfo());
@@ -78,7 +84,8 @@ public class iboxServlet extends HttpServlet {
                         i.h = nt.GetHeight()-i.y;
                     }                 
                 }
-                originalImage = nt.FetchImage(i.x, i.y, i.w, i.h, i.tx, i.tx);
+                String fileType = target.substring(target.lastIndexOf('.') + 1);
+                originalImage = nt.FetchImage(i.x, i.y, i.w, i.h, i.tx, i.tx, fileType);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 if (i.imageformat == ImageFormat.JPG) {
                     ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
@@ -93,6 +100,7 @@ public class iboxServlet extends HttpServlet {
                     baos.close();
                     response.setContentType("image/jpg");
                     response.setContentLength(imageInByte.length);
+                    response.setHeader("Access-Control-Allow-Origin", "*");
                     response.getOutputStream().write(imageInByte);
                 } else if (i.imageformat == ImageFormat.PNG) {
                     ImageWriter writer = ImageIO.getImageWritersByFormatName("png").next();
@@ -105,10 +113,14 @@ public class iboxServlet extends HttpServlet {
                     baos.close();
                     response.setContentType("image/png");
                     response.setContentLength(imageInByte.length);
+                    response.setHeader("Access-Control-Allow-Origin", "*");
                     response.getOutputStream().write(imageInByte);
                 }
             } else if (i.inforequest) {
+                nt.setURL(request.getRequestURL().toString()+"?"+request.getQueryString());
+                nt.setURL(Settings.ProxyHostName+request.getRequestURI().toString()+"?"+request.getQueryString());
                 response.setContentType("application/json");
+                response.setHeader("Access-Control-Allow-Origin", "*");
                 PrintWriter writer=response.getWriter();
                 writer.append(nt.GetImageInfo());
                 writer.flush();

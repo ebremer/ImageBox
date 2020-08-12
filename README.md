@@ -12,3 +12,9 @@ see https://github.com/ebremer/ImageBox/issues
 Notes:
 
 ImageBox has it's own embedded HTTP server based on Eclipse Jetty (https://www.eclipse.org/jetty/).  JSON-LD support is provided by Apache Jena (https://jena.apache.org/)
+
+Quick Start:
+
+1) Build Imagebox maven project to a jar file.  ImageBox was developing using the Apache Netbeans IDE (https://netbeans.apache.org/).
+2) at a command line, execute "java -jar ImageBox-2.0.0.jar"
+3) server will start and be listening on port 8888 (only changeable in code right now)

@@ -40,6 +40,7 @@ import loci.formats.services.OMEXMLServiceImpl;
 import ome.xml.meta.OMEXMLMetadataRoot;
 import ome.xml.model.Image;
 import ome.xml.model.primitives.PositiveInteger;
+
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.util.InputStreamResponseListener;
@@ -55,8 +56,8 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     private String url = null;
     private HttpClient httpClient = null;
     private long length = -1;
-    private long bufferstart = Integer.MAX_VALUE;
-    public long chunksize = (long) Math.pow(2,15);
+    private long bufferstart = Long.MAX_VALUE;
+    public long chunksize = (long) Math.pow(2,22);
     private long pos;
     private ByteArrayHandle bah;
     private ByteOrder order;
@@ -64,6 +65,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     public long calls = 0;
     private long numreadByte = 0;
     private long numreadShort = 0;
+    private long numreadLong = 0;
     private long numreadByteRange = 0;
     private long minrange = Long.MAX_VALUE;
     private long maxrange = Long.MIN_VALUE;
@@ -71,9 +73,9 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     private long numreadUnsignedShort = 0;
     private long numreadInt = 0;
     private String uuid = UUID.randomUUID().toString();
+    private int numreadFloat;
     
     HTTPIRandomAccess3(String url) {
-        //System.out.println("HTTPIRandomAccess3 initializing..."+uuid+" "+url);
         tm = new TreeMap<>();
         this.url = url;
         if (httpClient == null) {
@@ -113,10 +115,10 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     private void FillBuffer(long start, long len) {
         calls++;
-        //System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
+        System.out.println("xFillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
         if (len>this.length) {
-            System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
-            System.out.println("clipping request..."+len+" to "+this.length);
+            //System.out.println("FillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
+            System.out.println("CLIPPING request..."+len+" to "+this.length);
             len = this.length;
         }
         byte[] bytes = null;
@@ -155,8 +157,10 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public void close() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Why am I closing"); 
+        System.out.println("I'm a gonna do nothing....");
     }
+    	
 
     @Override
     public long getFilePointer() throws IOException {
@@ -181,6 +185,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public int read(byte[] b) throws IOException {
+        System.out.println("read(byte[] b)");
         numreadByteRange++;
         avgrange = avgrange + b.length;
         if (b.length>maxrange) {
@@ -201,8 +206,15 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int read(byte[] b, int off, int len) throws IOException {      
+        System.out.println(pos +" "+length+" READ "+b.length+" "+off+" "+len);
+        numreadByte++;
+        int i = 0;
+        while (i<len) {
+            b[i+off] = readByte();
+            i++;
+        }
+        return i;
     }
 
     @Override
@@ -217,7 +229,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public void seek(long pos) throws IOException {
-        //System.out.println("seek("+Long.toHexString(pos)+")");
+        System.out.println("seek("+Long.toHexString(pos)+")");
         if ((pos<bufferstart) || (pos>bufferstart+bah.length())) {
             if (bah!=null) {
                 //System.out.println("saving "+Long.toHexString(bufferstart)+" into cache...");
@@ -226,11 +238,11 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
                 }
             }
             Entry entry = tm.floorEntry((Long)pos);
-            //System.out.println("SIZE : "+tm.size());
             if (entry==null) {
-                //System.out.println(Long.toHexString(pos)+" not in cache...");
+                System.out.println(Long.toHexString(pos)+" not in cache...");
                 FillBuffer(pos,chunksize);
-                //FillBuffer(0,315219369L);
+                //System.out.println("Fullo buffer hack...");
+                //FillBuffer(0,702863925);
             } else {
                 ByteArrayHandle bh = (ByteArrayHandle) entry.getValue();
                 bufferstart = (long) entry.getKey();
@@ -239,7 +251,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
                 bah.setOrder(order);
                 this.pos = pos;
                 if ((pos<bufferstart) || (pos>bufferstart+bah.length())) {
-                    //System.out.println(bufferstart+" not good enough, need to load new data...");
+                    System.out.println(bufferstart+" not good enough, need to load new data...");
                     FillBuffer(pos,chunksize);
                 } else {
                     bah.seek(pos-bufferstart);
@@ -275,7 +287,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public int skipBytes(int n) throws IOException {
-        //System.out.println("skipBytes("+n+")");
+        System.out.print("skipBytes(int n) = ");
         if (n>(bah.length()-bah.getFilePointer())) {
             seek(pos+n);
         } else {
@@ -296,7 +308,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
         //System.out.print("readByte() = ");
         byte b = 0;
         if (bah.getFilePointer()==bah.length()) {
-            //System.out.println("untested 2 - "+pos+" "+chunksize);
+            System.out.println("readByte() untested 2 - "+pos+" "+chunksize);
             FillBuffer(pos,chunksize);
         }
         b = bah.readByte();
@@ -315,7 +327,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
         numreadShort++;
         //System.out.print("readShort() = ");
         if ((bah.length()-bah.getFilePointer())==0) {
-            System.out.println("untested");
+            System.out.println("untested readShort");
             FillBuffer(pos,chunksize);
         }
         short b = bah.readShort();
@@ -327,7 +339,7 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     @Override
     public int readUnsignedShort() throws IOException {
         numreadUnsignedShort++;
-        //System.out.print("readUnsignedShort() = ");
+        System.out.print("readUnsignedShort() = ");
         int s = readShort() & 0xffff;
         return s;
     }
@@ -340,26 +352,42 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
     @Override
     public int readInt() throws IOException {
         numreadInt++;
-        //System.out.print("readInt() = ");
+        System.out.println("readInt()");
         int b = 0;
         if ((bah.length()-bah.getFilePointer())<4) {
-            //System.out.println("untested 3");
+            System.out.println("trigger!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             FillBuffer(pos,chunksize);
         }
         b = bah.readInt();
         pos=pos+4;
-        //System.out.println(Integer.toHexString(b));
         return b;
     }
 
     @Override
     public long readLong() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.print("readLong()");
+    	numreadLong++;
+        long b = 0;
+        if ((bah.length()-bah.getFilePointer())<8) {
+            FillBuffer(pos,chunksize);
+        }
+        b = bah.readLong();
+        pos=pos+8;
+        return b;
     }
 
     @Override
     public float readFloat() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    	numreadFloat++;
+        System.out.println("I'm FLOATING....."+numreadFloat);
+        float b = 0;
+        if ((bah.length()-bah.getFilePointer())<4) {
+            System.out.println("Extending buffer...");
+            FillBuffer(pos,chunksize);
+        }
+        b = bah.readFloat();
+        pos=pos+4;
+        return b;
     }
 
     @Override
@@ -528,11 +556,15 @@ public class HTTPIRandomAccess3 implements IRandomAccess {
 
     @Override
     public boolean exists() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public long skipBytes(long l) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println(pos+" Skip : "+l);
+        seek(pos+l);
+        return l;
+        
     }   
 }
