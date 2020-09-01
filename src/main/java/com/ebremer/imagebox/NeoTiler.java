@@ -71,7 +71,7 @@ public class NeoTiler {
         lastaccessed = System.nanoTime();
         String getthis;
         if (f.startsWith("http")) {
-            System.out.println("RANGE REQUEST "+f);
+            //System.out.println("RANGE REQUEST "+f);
             HTTPIRandomAccess4 bbb = new HTTPIRandomAccess4(f);
           
             Location.mapFile("charm", bbb);
@@ -496,7 +496,7 @@ public class NeoTiler {
     }
     
     private BufferedImage GrabImage(int xpos, int ypos, int width, int height, String type) {
-        System.out.println("grab image : "+xpos+ " "+ypos+" "+width+" "+height+"=== "+type);
+        //System.out.println("grab image : "+xpos+ " "+ypos+" "+width+" "+height+"=== "+type);
         meta.setRoot(newRoot);
         meta.setPixelsSizeX(new PositiveInteger(width), 0);
         meta.setPixelsSizeY(new PositiveInteger(height), 0);

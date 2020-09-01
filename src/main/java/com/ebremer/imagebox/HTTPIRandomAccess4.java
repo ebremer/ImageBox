@@ -78,7 +78,7 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
     private int CurrentChunk = -1;
     
     HTTPIRandomAccess4(String url) {
-        System.out.println("HTTPIRandomAccess4 " +url);
+        //System.out.println("HTTPIRandomAccess4 " +url);
         tm = new TreeMap<>();
         this.url = url;
         if (httpClient == null) {
@@ -92,7 +92,7 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
             }
             String mimetype = "application/octet-stream";
             InputStreamResponseListener listener = new InputStreamResponseListener();
-            System.out.println("xURL : "+this.url);
+            //System.out.println("xURL : "+this.url);
             httpClient.newRequest(this.url).method(HttpMethod.HEAD).header("Accept", mimetype).send(listener);
             Response response = null;
             try {
@@ -117,7 +117,7 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
                 System.out.println("zamError detected on accessing!!! : ("+response.getStatus()+") : "+url);
             }
         }
-        System.out.println("Done init of HTTPIRandomAccess4...");
+        //System.out.println("Done init of HTTPIRandomAccess4...");
     }
     
     private int WhatChunkIs(long address) {
@@ -149,7 +149,7 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
 
     private void FillBuffer(long start, long len) throws IOException {
         calls++;
-        System.out.println("xFillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
+        //System.out.println("xFillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
         if (len>length) {
             throw new IOException("FillBuffer: not enough data for request...");
         }
@@ -243,7 +243,7 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {      
-        System.out.println(pos +" "+length+" READ "+b.length+" "+off+" "+len);
+        //System.out.println(pos +" "+length+" READ "+b.length+" "+off+" "+len);
         numreadByte++;
         int i = 0;
         while (i<len) {
@@ -299,8 +299,8 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
 
     @Override
     public int skipBytes(int n) throws IOException {
-        System.out.print("skipBytes(int n) = ");
-        
+        //System.out.print("skipBytes(int n) = ");
+        seek(pos+n);
         return n;
     }
 
@@ -565,7 +565,6 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
 
     @Override
     public long skipBytes(long l) throws IOException {
-        System.out.println(pos+" Skip : "+l);
         seek(pos+l);
         return l;
     }   
