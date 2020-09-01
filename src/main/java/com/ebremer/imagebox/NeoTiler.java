@@ -72,7 +72,7 @@ public class NeoTiler {
         String getthis;
         if (f.startsWith("http")) {
             System.out.println("RANGE REQUEST "+f);
-            HTTPIRandomAccess3 bbb = new HTTPIRandomAccess3(f);
+            HTTPIRandomAccess4 bbb = new HTTPIRandomAccess4(f);
           
             Location.mapFile("charm", bbb);
             getthis = "charm";
@@ -87,6 +87,7 @@ public class NeoTiler {
         String fileType = f.substring(f.lastIndexOf('.') + 1);
         if(fileType.equals("svs")) {
             SReader = new SVSReader();
+            this.uni = SReader;
             //SReader = new Memoizer(warp, 0L, new File("cache"));
             SReader.setGroupFiles(true);
             SReader.setMetadataFiltered(true);
