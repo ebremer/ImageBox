@@ -388,8 +388,7 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
     @Override
     public float readFloat() throws IOException {
         System.out.println("readFloat()");
-        numreadInt++;
-        return Float.intBitsToFloat((readByte()<<24)|(readByte()<<16)|(readByte()<<8)|readByte());
+        return Float.intBitsToFloat(readInt());
     }
 
     @Override

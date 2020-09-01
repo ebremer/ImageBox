@@ -115,12 +115,6 @@ public class NeoTiler {
                     lowerbound = MaxImage(SReader);
                 }
                 Hashtable<String, Object> hh = SReader.getSeriesMetadata();
-                //Enumeration ee = hh.keys();
-            //while (ee.hasMoreElements()) {
-//                String ya = (String) ee.nextElement();
-//                System.out.println("*****>>>>> "+ya);
-//            }
-      //          System.out.println(hh.get("MPP"));
                 if (hh.containsKey("MPP")) {
                     double mpp = Double.parseDouble((String) hh.get("MPP"));
                     mppx = mpp;
@@ -181,10 +175,6 @@ public class NeoTiler {
         } else if (fileType.equals("ndpi")) {
         	NReader = new NDPIReader();
             uni = NReader;    
-            //NReader = new Memoizer(warp, 0L, new File("cache"));
-            //NReader.setGroupFiles(true);
-            //NReader.setMetadataFiltered(true);
-            //NReader.setOriginalMetadataPopulated(true);
             try {
                 factory = new ServiceFactory();
                 service = factory.getInstance(OMEXMLService.class);
@@ -503,21 +493,20 @@ public class NeoTiler {
         byte[] buf;
         BufferedImage bb = null;
         try {
-        	if (type.equals("svs")) {
-        		buf = SReader.openBytes(0, xpos, ypos, width, height);
-        		bb = AWTImageTools.makeImage(buf, SReader.isInterleaved(), meta, 0);        		
-        	} else if (type.equals("ndpi")) {
-                    System.out.println(NReader.getSizeX()+"x"+NReader.getSizeY());
-                    buf = NReader.openBytes(0, xpos, ypos, width, height);
-                    //buf = NReader.openBytes(0, 0, 0, 4096, 4096);
-                    System.out.println("image is "+(buf==null));
-                    bb = AWTImageTools.makeImage(buf, NReader.isInterleaved(), meta, 0);
-        	}
+            if (type.equals("svs")) {
+        	buf = SReader.openBytes(0, xpos, ypos, width, height);
+        	bb = AWTImageTools.makeImage(buf, SReader.isInterleaved(), meta, 0);        		
+            } else if (type.equals("ndpi")) {
+                System.out.println(this.url+" Grah: "+NReader.getSizeX()+"x"+NReader.getSizeY());
+                
+                buf = NReader.openBytes(0, xpos, ypos, width, height);
+                System.out.println("image is "+(buf==null));
+                bb = AWTImageTools.makeImage(buf, NReader.isInterleaved(), meta, 0);
+            }
         } catch (FormatException | IOException ex) {
             System.out.println("I'm dying....ERROR");
             Logger.getLogger(NeoTiler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+        } 
         return bb;
     }
 }
