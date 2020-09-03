@@ -56,23 +56,10 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
     private String url = null;
     private HttpClient httpClient = null;
     private long length = -1;
-    //private long bufferstart = Long.MAX_VALUE;
-    public long chunksize = (long) Math.pow(2,27);
+    public long chunksize = (long) Math.pow(2,17);
     private long pos;
     private ByteArrayHandle bah;
-    //private ByteOrder order;
     private TreeMap<Integer,ByteArrayHandle> tm;
-    private TreeMap<Long,ByteArrayHandle> tm2;
-    public long calls = 0;
-    private long numreadByte = 0;
-    private long numreadShort = 0;
-    private long numreadLong = 0;
-    private long numreadByteRange = 0;
-    private long minrange = Long.MAX_VALUE;
-    private long maxrange = Long.MIN_VALUE;
-    private long avgrange = 0;
-    private long numreadUnsignedShort = 0;
-    private long numreadInt = 0;
     private final String uuid = UUID.randomUUID().toString();
     private int numreadFloat;
     private int CurrentChunk = -1;
@@ -139,7 +126,6 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
     }
     
     private void FillBuffer(long start, long len) {
-        calls++;
         //System.out.println("xFillBuffer   start "+Long.toHexString(start)+ " end "+Long.toHexString(start+len));
         byte[] bytes = null;
         String mimetype = "application/octet-stream";
@@ -551,18 +537,7 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
             }
             long endtime = System.nanoTime();
             long totaltime = (endtime - starttime)/1000000;
-            double time = ((double) totaltime)/numruns;
-            System.out.println("Average time is : "+time);
-            System.out.println("http calls           : "+bbb.calls);
-            System.out.println("numreadByte          : "+bbb.numreadByte);
-            System.out.println("numreadShort         : "+bbb.numreadShort);
-            System.out.println("numreadByteRange     : "+bbb.numreadByteRange);
-            System.out.println("maxrange             : "+bbb.maxrange);
-            System.out.println("minrange             : "+bbb.minrange);
-            System.out.println("avgrange             : "+((double) bbb.avgrange)/((double) bbb.numreadByteRange));
-            System.out.println("numreadUnsignedShort : "+bbb.numreadUnsignedShort);
-            System.out.println("numreadInt           : "+bbb.numreadInt);
-    
+            double time = ((double) totaltime)/numruns;  
         } catch (DependencyException de) {
             throw new MissingLibraryException(OMEXMLServiceImpl.NO_OME_XML_MSG, de);
         } finally {
