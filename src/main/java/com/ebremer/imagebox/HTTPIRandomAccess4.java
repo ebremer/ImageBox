@@ -342,10 +342,24 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
 
     @Override
     public long readLong() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int a = this.readInt();
+        int b = this.readInt();
+        if (this.getOrder() == ByteOrder.LITTLE_ENDIAN) {
+            return ((long)(b << 32) + (a & 0xFFFFFFFFL));
+        } else {
+            return ((long)(a << 32) + (b & 0xFFFFFFFFL));
+        }
     }
     
-
+    @Override
+    public void readFully(byte[] b) throws IOException {
+        int i = 0;
+        while (i<b.length) {
+            b[i] = this.readByte();
+            i++;
+        }
+    }
+    
     @Override
     public boolean exists() throws IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -373,11 +387,6 @@ public class HTTPIRandomAccess4 implements IRandomAccess {
 
     @Override
     public void write(ByteBuffer buf, int off, int len) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void readFully(byte[] b) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
