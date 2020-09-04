@@ -26,7 +26,7 @@ public class ImageReaderPool {
                     IRL irl = pool.get(tag);
                     long age = ((System.nanoTime()-irl.getLastAccess())/1000000000);
                     if (age>Settings.MaxAgeReaderPool) {
-                        System.out.println("purging "+tag);
+                        //System.out.println("purging "+tag);
                         RemovePool(tag);
                     }
                     //System.out.println(tag + "  "+ age);
@@ -53,7 +53,7 @@ public class ImageReaderPool {
     }
     
     public NeoTiler GetReader(String id) {
-        System.out.println("GetReader "+id);
+        //System.out.println("GetReader "+id);
         NeoTiler reader = GetReaderFromPool(id);
         if (reader==null) {
             reader = new NeoTiler(id);
@@ -62,22 +62,22 @@ public class ImageReaderPool {
     }
 
     public synchronized void RemovePool(String id) {
-        System.out.println("RemovePool "+id);
+        //System.out.println("RemovePool "+id);
         pool.remove(id);
     }
 
     public synchronized void ReturnReader(String id, NeoTiler reader) {
-        System.out.println("ReturnReader "+id);
+        //System.out.println("ReturnReader "+id);
         if (pool.containsKey(id)) {
             ArrayList<IRO> list = pool.get(id).getPool();
             list.add(new IRO(reader));
             System.out.println("pool size [e]: "+list.size());
         } else {
-            System.out.println("creating new list...");
+            //System.out.println("creating new list...");
             ArrayList<IRO> list = new ArrayList<>();
             list.add(new IRO(reader));
             pool.put(id, new IRL(list));
-            System.out.println("pool size [ne]: "+list.size());
+            //System.out.println("pool size [ne]: "+list.size());
         }        
     }
 }
