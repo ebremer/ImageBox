@@ -10,5 +10,5 @@ public class Settings {
     static long MaxAgeReaderPool = 600;
     static long ReaderPoolScanDelay = 600;
     static long ReaderPoolScanRate = 60;
-    static String ProxyHostName = "https://quip.bmi.stonybrook.edu";
+    static String ProxyHostName = "http://localhost:8899";
 }

@@ -110,7 +110,7 @@ public class NeoTiler {
         }
         if (!borked) {
             newRoot = (OMEXMLMetadataRoot) meta.getRoot();
-            numi = reader.getSeriesCount();
+            numi = reader.getSeriesCount()-1;
             if (getthis.endsWith(".vsi")) {
                 lowerbound = MaxImage(reader);
             }
@@ -125,7 +125,7 @@ public class NeoTiler {
             py = new int[numi];
             pr = new int[numi];
             pi = new int[numi];
-            for (int j=0;j<reader.getSeriesCount();j++) {
+            for (int j=0;j<reader.getSeriesCount()-1;j++) {
                 big = reader.getCoreMetadataList().get(j);
                 System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
             }
@@ -353,7 +353,7 @@ public class NeoTiler {
         int gy=(int) (y*rr);
         int gw=(int) (w*rr);
         int gh=(int) (h*rr);
-        System.out.println("gx:"+gx+", gy:"+gy+", gw:"+gw+", gh:"+gh+", size:"+rr);
+        //System.out.println("gx:"+gx+", gy:"+gy+", gw:"+gw+", gh:"+gh+", size:"+rr);
         BufferedImage bi = GrabImage(gx,gy,gw,gh,type);
         BufferedImage target;
         AffineTransform at = new AffineTransform();

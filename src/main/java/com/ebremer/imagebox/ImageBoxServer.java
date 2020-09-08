@@ -38,7 +38,7 @@ public class ImageBoxServer extends Thread {
         } catch (BindException ex) {
             final JFrame parent = new JFrame();
             JButton button = new JButton();
-            button.setText("Other QuIP instance detected!  Shutting down...");
+            button.setText("Other instance detected!  Shutting down...");
             parent.add(button);
             parent.pack();
             parent.setVisible(true);
