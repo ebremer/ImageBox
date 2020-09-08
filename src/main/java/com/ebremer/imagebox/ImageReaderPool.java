@@ -71,7 +71,7 @@ public class ImageReaderPool {
         if (pool.containsKey(id)) {
             ArrayList<IRO> list = pool.get(id).getPool();
             list.add(new IRO(reader));
-            System.out.println("pool size [e]: "+list.size());
+            //System.out.println("pool size [e]: "+list.size());
         } else {
             //System.out.println("creating new list...");
             ArrayList<IRO> list = new ArrayList<>();

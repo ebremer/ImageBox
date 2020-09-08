@@ -66,20 +66,13 @@ public class NeoTiler {
         lastaccessed = System.nanoTime();
         String getthis;
         if (f.startsWith("http")) {
-            System.out.println("RANGE REQUEST "+f);
             HTTPIRandomAccess4 bbb = new HTTPIRandomAccess4(f);
             Location.mapFile("charm", bbb);
             getthis = "charm";
         } else {
-            System.out.println("nooooooooo RANGE REQUEST");
             getthis = f;
         }
-        File cache = new File("cache");
-        if (!cache.exists()) {
-            cache.mkdir();
-        }
         String fileType = f.substring(f.lastIndexOf('.') + 1);
-        System.out.println(fileType+" detected");
         switch (fileType) {
             case "ndpi":
                 reader = new NDPIReader();
@@ -90,92 +83,88 @@ public class NeoTiler {
             case "tif":
                 reader = new TiffReader();
                 break;            
-            case "vsi":
+            case "vsi":  // VSI will require more work.  It is broken at the moment
                 reader = new CellSensReader();
-                break;  
+                break;
+            default:
+                reader = null;
         }
-                reader.setGroupFiles(true);
-                reader.setMetadataFiltered(true);
-                reader.setOriginalMetadataPopulated(true);
-                try {
-                    factory = new ServiceFactory();
-                    service = factory.getInstance(OMEXMLService.class);
-                    reader.setMetadataStore(service.createOMEXMLMetadata(null, null));
-                    reader.setId(getthis);
-                    store = reader.getMetadataStore();
-                    MetadataTools.populatePixels(store, reader, false, false);
-                    reader.setSeries(0);
-                    String xml = service.getOMEXML(service.asRetrieve(store));
-                    meta = service.createOMEXMLMetadata(xml);
-                } catch (DependencyException | ServiceException | IOException ex) {
-                    Logger.getLogger(NeoTiler.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (FormatException ex) {
-                    borked = true;
-                    status = ex.getMessage();
-                }   if (!borked) {
-                    newRoot = (OMEXMLMetadataRoot) meta.getRoot();
-                    numi = reader.getSeriesCount();
-                    if (getthis.endsWith(".vsi")) {
-                        lowerbound = MaxImage(reader);
-                    }
-                    Hashtable<String, Object> hh = reader.getSeriesMetadata();
-                    if (hh.containsKey("MPP")) {
-                        double mpp = Double.parseDouble((String) hh.get("MPP"));
-                        mppx = mpp;
-                        mppy = mpp;
-                    }
-                    numi = numi - lowerbound;
-                    px = new int[numi];
-                    py = new int[numi];
-                    pr = new int[numi];
-                    pi = new int[numi];
-                    //pratio = new float[numi];
-                    CoreMetadata big;
-                    System.out.println("=============================================================");
-                    for (int j=0;j<reader.getSeriesCount();j++) {
-                        big = reader.getCoreMetadataList().get(j);
-                        System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
-                    }
-                    System.out.println("=============================================================");
-                    big = reader.getCoreMetadataList().get(lowerbound);
-                    float ratio = ((float) big.sizeX)/((float) big.sizeY);
-                    for (int j=lowerbound;j<(numi+lowerbound);j++) {
-                        big = reader.getCoreMetadataList().get(j);
-                        int offset = j-lowerbound;
-                        px[offset] = big.sizeX;
-                        py[offset] = big.sizeY;
-                        pr[offset] = px[lowerbound]/px[offset];
-                        pi[offset] = j;
-                        float mi = (((float) big.sizeX)/((float)big.sizeY));
-                        float off = abs((mi-ratio)/ratio);
-                        if (off>0.01) {
-                            px[offset] = 1;
-                        }
-                    }
-                    SortImages();
-                    upperbound = lowerbound + 1;
-                    while ((upperbound<numi)&&(px[upperbound]>1024)) {
-                        upperbound++;
-                    }
-                    for (int j=0;j<numi;j++) {
-                        pr[j] = px[0]/px[j];
-                        //System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
-                    }
-                    numi = upperbound - lowerbound;
-                    //System.out.println("lower bound : "+lowerbound);
-                    //System.out.println("upper bound : "+upperbound);
-                    reader.setSeries(lowerbound);
-                    iWidth = reader.getSizeX();
-                    iHeight = reader.getSizeY();
-                } else {
-                    iWidth = 0;
-                    iHeight = 0;
-                    px = null;
-                    py = null;
-                    pr = null;
-                    pi = null;
-                    //pratio = null;
+        reader.setGroupFiles(true);
+        reader.setMetadataFiltered(true);
+        reader.setOriginalMetadataPopulated(true);
+        try {
+            factory = new ServiceFactory();
+            service = factory.getInstance(OMEXMLService.class);
+            reader.setMetadataStore(service.createOMEXMLMetadata(null, null));
+            reader.setId(getthis);
+            store = reader.getMetadataStore();
+            MetadataTools.populatePixels(store, reader, false, false);
+            reader.setSeries(0);
+            String xml = service.getOMEXML(service.asRetrieve(store));
+            meta = service.createOMEXMLMetadata(xml);
+        } catch (DependencyException | ServiceException | IOException ex) {
+            Logger.getLogger(NeoTiler.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FormatException ex) {
+            borked = true;
+            status = ex.getMessage();
+        }
+        if (!borked) {
+            newRoot = (OMEXMLMetadataRoot) meta.getRoot();
+            numi = reader.getSeriesCount()-1;
+            if (getthis.endsWith(".vsi")) {
+                lowerbound = MaxImage(reader);
+            }
+            Hashtable<String, Object> hh = reader.getSeriesMetadata();
+            if (hh.containsKey("MPP")) {
+                double mpp = Double.parseDouble((String) hh.get("MPP"));
+                mppx = mpp;
+                mppy = mpp;
+            }
+            numi = numi - lowerbound;
+            px = new int[numi];
+            py = new int[numi];
+            pr = new int[numi];
+            pi = new int[numi];
+            for (int j=0;j<reader.getSeriesCount()-1;j++) {
+                big = reader.getCoreMetadataList().get(j);
+                System.out.println(j+" >>> "+big.sizeX+","+big.sizeY+" aspect ratio : "+(((float) big.sizeX)/((float)big.sizeY)));
+            }
+            big = reader.getCoreMetadataList().get(lowerbound);
+            float ratio = ((float) big.sizeX)/((float) big.sizeY);
+            for (int j=lowerbound;j<(numi+lowerbound);j++) {
+                big = reader.getCoreMetadataList().get(j);
+                int offset = j-lowerbound;
+                px[offset] = big.sizeX;
+                py[offset] = big.sizeY;
+                pr[offset] = px[lowerbound]/px[offset];
+                pi[offset] = j;
+                float mi = (((float) big.sizeX)/((float)big.sizeY));
+                float off = abs((mi-ratio)/ratio);
+                if (off>0.01) {
+                    px[offset] = 1;
                 }
+            }
+            SortImages();
+            upperbound = lowerbound + 1;
+            while ((upperbound<numi)&&(px[upperbound]>1024)) {
+                upperbound++;
+            }
+            for (int j=0;j<numi;j++) {
+                pr[j] = px[0]/px[j];
+                //System.out.println(j+" >>> "+pi[j]+" "+pr[j]+"  "+px[j]+","+py[j]);
+            }
+            numi = upperbound - lowerbound;
+            reader.setSeries(lowerbound);
+            iWidth = reader.getSizeX();
+            iHeight = reader.getSizeY();
+        } else {
+            iWidth = 0;
+            iHeight = 0;
+            px = null;
+            py = null;
+            pr = null;
+            pi = null;
+        }
     }
     
     public void setURL(String r) {
@@ -364,7 +353,7 @@ public class NeoTiler {
         int gy=(int) (y*rr);
         int gw=(int) (w*rr);
         int gh=(int) (h*rr);
-        System.out.println("gx:"+gx+", gy:"+gy+", gw:"+gw+", gh:"+gh+", size:"+rr);
+        //System.out.println("gx:"+gx+", gy:"+gy+", gw:"+gw+", gh:"+gh+", size:"+rr);
         BufferedImage bi = GrabImage(gx,gy,gw,gh,type);
         BufferedImage target;
         AffineTransform at = new AffineTransform();
