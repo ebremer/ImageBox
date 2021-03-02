@@ -53,13 +53,13 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>9.4.32-SNAPSHOT</version>
+            <version>9.4.32.v20200930</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
-            <version>9.4.32-SNAPSHOT</version>
+            <version>9.4.32.v20200930</version>
             <type>jar</type>
         </dependency>
     </dependencies>
