@@ -290,7 +290,7 @@ public class NeoTiler {
         clip = (int) Math.ceil(Math.log(clip)/Math.log(2));
         clip = clip - (int) (Math.ceil(Math.log(Math.max(reader.getOptimalTileHeight(), reader.getOptimalTileWidth()))/Math.log(2)));
         for (int j=0;j<clip;j++) {
-            int pow = (int) Math.pow(2, j);
+            int pow = (int) Math.pow(4, j);
             scalefactors.add(pow);
         }
         for (int j=clip-1;j>=0;j--) {

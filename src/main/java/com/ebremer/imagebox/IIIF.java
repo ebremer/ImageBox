@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 public class IIIF {
     private static final Pattern PATTERN1 = Pattern.compile("(.*)?/(\\d*),(\\d*),(\\d*),(\\d*)/(\\d*),/(\\d*)/default.(jpg|png)");
     private static final Pattern PATTERN2 = Pattern.compile("(.*)?/full/(\\d*),/(\\d*)/default.(jpg|png)");
-    private static final Pattern INFO = Pattern.compile("(.*)?/info.js");
+    private static final Pattern INFO = Pattern.compile("(.*)?/info.json");
     private Matcher matcher;
     public URI uri = null;
     public int x;
